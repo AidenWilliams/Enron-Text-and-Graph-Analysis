@@ -3,7 +3,7 @@ import json,os
 from tqdm import tqdm
 
 
-
+docs = {}
 
 def docBuilder(mailboxes):
     global docs
@@ -49,19 +49,29 @@ def checkDuplicates():
     print('done checking doubles')
 
 
-def save(data,path):
-    print('saving')
-    with open(path,'w') as f:
-        json.dump(data,f,indent=4)
+def _saveToFile(data, path):
+    print('Saving')
+    with open(path, 'w') as fp:
+        json.dump(data, fp, indent=4)
 
 
-path = os.path.join('intermediary', 'mailboxes.json')
-with open(path) as f:
+pathMB = os.path.join('intermediary', 'mailboxes.json')
+with open(pathMB) as f:
     mailboxes = json.load(f)
 
-docBuilder(mailboxes)
-checkDuplicates()
+
 path = os.path.join('intermediary', 'documents.json')
-save(docs,path)
+
+if os.path.isfile(path) and os.access(path, os.R_OK):
+    print("Docs file found!")
+    print('Reading...')
+    with open(path, 'r') as f:
+        docs = json.load(f)
+
+else:
+    print("Either file is missing or is not readable, creating file...")
+    docBuilder(mailboxes)
+    checkDuplicates()
+    _saveToFile(docs, path)
 
 

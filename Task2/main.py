@@ -59,18 +59,21 @@ def _saveToFile(data, path):
         json.dump(data, fp, indent=4)
 
 
-loadData(myDict, rootDir)
-path = "../intermediary/file.json"
+def init(path="../intermediary/file.json"):
+    myDict = {}
+    if os.path.isfile(path) and os.access(path, os.R_OK):
+        print("Docs file found!")
+        print('Reading...')
+        with open(path, 'r') as f:
+            myDict = json.load(f)
 
-if os.path.isfile(path) and os.access(path, os.R_OK):
-    print("Docs file found!")
-    print('Reading...')
-    with open(path, 'r') as f:
-        docs = json.load(f)
+    else:
+        print("Either file is missing or is not readable, creating file...")
+        loadData(myDict, rootDir)
+        _saveToFile(myDict, path=path)
 
-else:
-    print("Either file is missing or is not readable, creating file...")
-    #docs = _docBuilder(mailboxes)
-    _saveToFile(myDict, path=path)
+
+myDict = {}
+init()
 
 

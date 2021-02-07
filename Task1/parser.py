@@ -97,7 +97,11 @@ def _docBuilder(mailboxes):
     docs = {}
     for key, mail in combinedMail.items():
         [print(email) for email in mail if isinstance(email, list)]
-        docs[key] = [email['text'] for email in mail]
+
+
+        docs[key] = ""
+        for email in mail:
+            docs[key] += email['text']
     return docs
 
 

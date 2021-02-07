@@ -4,7 +4,7 @@ from enron_reader import EnronReader
 import json
 # import pickle
 
-_reader = EnronReader("data/subset/")
+_reader = EnronReader("data/maildir/")
 
 def _getMailBoxes():
     maxCount = len(_reader.get_user_ids())

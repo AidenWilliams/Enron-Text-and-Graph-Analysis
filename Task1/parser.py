@@ -5,7 +5,7 @@ import json
 
 # import pickle
 
-_reader = EnronReader("data/subset/")
+_reader = EnronReader("data/maildir/")
 
 
 def _getMailBoxes():
@@ -16,7 +16,8 @@ def _getMailBoxes():
     for userID in _reader.get_user_ids():
 
         count += 1
-        print('\rFetching Mailboxes: ' + str(count / maxCount * 100) + '%                         ', end='')
+        print('\rFetching Mailboxes: '+str(count/maxCount * 100) +
+              '%                         ', end='')
 
         mailbox = _reader.get_mailbox_for_user(userID)
         main_folders = mailbox.root_folder.subfolders
@@ -24,28 +25,24 @@ def _getMailBoxes():
         if len(main_folders) <= 1:
             print(
                 f'\n\nMain Folders for "{userID}" were not found!\nSkipping...\n')
-            continue;
+            continue
 
         inbox_folder = main_folders[1]
         messages.clear()
 
         for message in inbox_folder.messages:
             message.email_from = message.email_from[1]
-            message.email_to = [u[1] for u in message.email_to if message.email_to is not None]
+            message.email_to = [
+                u[1] for u in message.email_to if message.email_to is not None]
             message.plaintext.lower().replace('"', "'")
 
             # msg = {'subject': message.subject, 'from': message.email_from,'to': message.email_to, 'text': message.plaintext}
-            msg = {'subject': message.subject, 'text': message.plaintext}
-
-            if message.email_to is not None:
-                for recip in message.email_to:
-                    if messages.get(recip) is None:
-                        messages[recip] = []
-                    messages[recip].append(msg);
+            msg = {'to': message.email_to,
+                   'subject': message.subject, 'text': message.plaintext}
 
             if mailboxes.get(message.email_from) is None:
                 mailboxes[message.email_from] = {}
-            mailboxes[message.email_from].update(messages)
+            mailboxes[message.email_from].append(msg)
     return mailboxes
 
 
@@ -61,9 +58,10 @@ def getDistinctAddrs(mailboxes):
         if key not in _emailAddresses:
             _emailAddresses.append(key)
 
-        for key2 in msgs.keys():
-            if key2 not in _emailAddresses:
-                _emailAddresses.append(key2)
+        for msg in msgs:
+            for to in msg['to']:
+                if to not in _emailAddresses:
+                    _emailAddresses.append(key)
     return _emailAddresses
 
 
@@ -72,23 +70,31 @@ def combineMail(_emailAddresses, mailboxes):
     for userA in _emailAddresses:
         if mailboxes.get(userA) is None:
             continue
+        
+        for message in mailboxes[userA]:
+            combined = ""
+            for userB in message['to']:
+                users = userA+userB
+                usersR = userB+userA
+                
 
-        for userB, messages in mailboxes[userA].items():
-            users = userA + userB
-            usersR = userB + userA
+                # if users in combinedMail or usersR in combinedMail:
+                #     continue
 
-            if users in combinedMail or usersR in combinedMail:
-                continue
+                # combined += message['text']
 
-            combined = messages
+                # if mailboxes.get(userB) is not None and mailboxes[userB].get(userA) is not None:
+                #     combined.extend(mailboxes[userB][userA])
+                if users in combinedMail:
+                    combinedMail[users] += message['text']
+                if usersR in combinedMail:
+                    combinedMail[usersR] += message['text']
 
-            if mailboxes.get(userB) is not None and mailboxes[userB].get(userA) is not None:
-                combined.extend(mailboxes[userB][userA])
-            combinedMail[users] = combined
     return combinedMail
 
 
 def _docBuilder(mailboxes):
+
     _emailAddresses = getDistinctAddrs(mailboxes)
     combinedMail = combineMail(_emailAddresses, mailboxes)
 

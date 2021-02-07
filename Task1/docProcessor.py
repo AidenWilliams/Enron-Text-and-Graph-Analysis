@@ -42,7 +42,7 @@ def docBuilder(mailboxes):
 
 def checkDuplicates():
     print('checking doubles')
-    for emailA in mailboxes.keys():
+    for emailA in tqdm(mailboxes.keys()):
         for emailB in mailboxes.keys():
             if (emailA+emailB) in mailboxes and (emailB+emailA) in mailboxes:
                 print('DUPLICATE FOUND!')

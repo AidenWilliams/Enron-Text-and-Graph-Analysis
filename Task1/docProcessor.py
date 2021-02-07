@@ -62,16 +62,40 @@ with open(pathMB) as f:
 
 path = os.path.join('intermediary', 'documents.json')
 
-if os.path.isfile(path) and os.access(path, os.R_OK):
-    print("Docs file found!")
-    print('Reading...')
-    with open(path, 'r') as f:
-        docs = json.load(f)
 
-else:
-    print("Either file is missing or is not readable, creating file...")
-    docBuilder(mailboxes)
-    checkDuplicates()
-    _saveToFile(docs, path)
+emailCount = count = tosCount = uniqueAdd = 0
+
+
+addresses = set()
+for sender in tqdm(mailboxes):
+    for email in mailboxes[sender]:
+        emailCount += 1
+        if len(email['tos']) > 0:
+
+            addresses.update(email['tos'])
+            count += 1
+            tosCount += len(email['tos'])
+
+
+print(f'There are {len(mailboxes.keys())} unique senders')
+print(f'There is also a total of {emailCount} emails')
+print(f'There are {count} which have addressees, with a total of {tosCount} addressees, {len(addresses)} of which are unique')
+
+addresses.update(mailboxes.keys())
+print(f'Thus there are {len(addresses)} unique total emails mentioned')
+
+# if os.path.isfile(path) and os.access(path, os.R_OK):
+#     print("Docs file found!")
+#     print('Reading...')
+#     with open(path, 'r') as f:
+#         docs = json.load(f)
+
+# else:
+#     print("Either file is missing or is not readable, creating file...")
+#     docBuilder(mailboxes)
+#     checkDuplicates()
+#     _saveToFile(docs, path)
+
+
 
 

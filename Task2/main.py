@@ -1,7 +1,9 @@
 import os
 from email.parser import Parser
+import time
+from tqdm import tqdm
 
-rootDir = "../data/allen-p/straw"
+rootDir = "../maildir/"
 myDict = {}
 
 
@@ -19,7 +21,7 @@ def readMail(email):
 
 
 def loadData(dic, root):
-    for directory, subdirectory, filenames in os.walk(root):
+    for directory, subdirectory, filenames in tqdm(os.walk(root)):
         for file in filenames:
             dir = directory + "/" + file
             with open(dir, "r") as f:
@@ -34,13 +36,15 @@ def loadData(dic, root):
                     dic.update({key: value})
 
 
+x = time.perf_counter()
 loadData(myDict, rootDir)
-
-for _from in myDict:
-    print("From: " + _from)
-    for mail in myDict.get(_from):
-        print("Subject: " + mail['subject'])
-        #print("Text: " + mail['text'])
-        print("To: ", end='')
-        for to in mail['tos']:
-            print(to + " ")
+y = time.perf_counter()
+print(str(y-x))
+# for _from in myDict:
+#     print("From: " + _from)
+#     for mail in myDict.get(_from):
+#         print("Subject: " + mail['subject'])
+#         #print("Text: " + mail['text'])
+#         print("To: ", end='')
+#         for to in mail['tos']:
+#             print(to + " ")

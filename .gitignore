@@ -130,3 +130,6 @@ dmypy.json
 
 Task1/data/
 Task1/intermediary/
+data/
+.vscode/
+intermediary/

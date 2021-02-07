@@ -4,8 +4,7 @@ from enron_reader import EnronReader
 import json
 # import pickle
 
-_reader = EnronReader("data/subset")
-_emailAddresses = []
+_reader = EnronReader("data/subset/")
 
 def _getMailBoxes():
     maxCount = len(_reader.get_user_ids())
@@ -32,12 +31,11 @@ def _getMailBoxes():
         for message in inbox_folder.messages:
             message.email_from = message.email_from[1]
             message.email_to = [u[1] for u in message.email_to if message.email_to is not None]
+            message.plaintext.lower().replace('"',"'")
+
 
             msg = {'subject': message.subject, 'from': message.email_from,
                    'to': message.email_to, 'text': message.plaintext}
-
-            if message.email_from not in _emailAddresses:
-                _emailAddresses.append(message.email_from)
             
 
             if message.email_to is not None:
@@ -46,10 +44,9 @@ def _getMailBoxes():
                         messages[recip] = []
                     messages[recip].append(msg);
 
-                    if recip not in _emailAddresses:
-                        _emailAddresses.append(recip)
-
-        mailboxes[message.email_from] = messages
+        if mailboxes.get(message.email_from) is None:
+            mailboxes[message.email_from] = {}
+        mailboxes[message.email_from].update(messages)
     return mailboxes
 
 
@@ -59,31 +56,48 @@ def _saveToFile(data, path):
         json.dump(data, fp, indent=4)
 
 
+def getDistinctAddrs(mailboxes):
+    _emailAddresses = []
+    for key, msgs in mailboxes.items():
+        if key not in _emailAddresses:
+            _emailAddresses.append(key)
 
-def _docBuilder(mailboxes):
+        for key2 in msgs.keys():
+            if key2 not in _emailAddresses:
+                _emailAddresses.append(key2)
+    return _emailAddresses
+
+
+def combineMail(_emailAddresses,mailboxes):
     combinedMail = {}
-    docs = {}
     for userA in _emailAddresses:
         if mailboxes.get(userA) is None:
-            continue;
+            continue
 
-        for userB,messages in mailboxes[userA].items():
+        for userB, messages in mailboxes[userA].items():
             users = userA+userB
             usersR = userB+userA
 
             if users in combinedMail or usersR in combinedMail:
-                continue;
+                continue
 
             combined = messages
             if mailboxes.get(userB) is not None and mailboxes[userB].get(userA) is not None:
                 combined.append(mailboxes[userB][userA])
-            
-            combinedMail[users] = combined
 
+            combinedMail[users] = combined
+    return combinedMail
+
+def _docBuilder(mailboxes):    
+    
+
+    _emailAddresses = getDistinctAddrs(mailboxes)
+    combinedMail = combineMail(_emailAddresses, mailboxes)
+
+    docs = {}
     for key, mail in combinedMail.items():
-        # print('key:',key)
-        docs[key] = [email['text']
-                     for email in mail if email.get('text') is not None]
+        [print(email) for email in mail if isinstance(email, list)]
+        docs[key] = [email['text'] for email in mail]
     return docs
 
 

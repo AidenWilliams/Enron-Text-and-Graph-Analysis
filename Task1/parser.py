@@ -34,8 +34,8 @@ def _getMailBoxes():
             message.plaintext.lower().replace('"',"'")
 
 
-            msg = {'subject': message.subject, 'from': message.email_from,
-                   'to': message.email_to, 'text': message.plaintext}
+            # msg = {'subject': message.subject, 'from': message.email_from,'to': message.email_to, 'text': message.plaintext}
+            msg = {'subject': message.subject, 'text': message.plaintext}
             
 
             if message.email_to is not None:
@@ -44,9 +44,9 @@ def _getMailBoxes():
                         messages[recip] = []
                     messages[recip].append(msg);
 
-        if mailboxes.get(message.email_from) is None:
-            mailboxes[message.email_from] = {}
-        mailboxes[message.email_from].update(messages)
+            if mailboxes.get(message.email_from) is None:
+                mailboxes[message.email_from] = {}
+            mailboxes[message.email_from].update(messages)
     return mailboxes
 
 
@@ -82,9 +82,9 @@ def combineMail(_emailAddresses,mailboxes):
                 continue
 
             combined = messages
+            
             if mailboxes.get(userB) is not None and mailboxes[userB].get(userA) is not None:
-                combined.append(mailboxes[userB][userA])
-
+                combined.extend(mailboxes[userB][userA])
             combinedMail[users] = combined
     return combinedMail
 

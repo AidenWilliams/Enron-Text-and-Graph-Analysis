@@ -1,16 +1,23 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import os
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+rootDir = "../data/"
+for directory, subdirectory, filenames in os.walk(rootDir):
+    print(directory, subdirectory, len(filenames))
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+# class mail:
+#     def __init__(self, _from, to, cc, bcc, subject, content):
+#         self._from = _from
+#         self.to = to
+#         self.cc = cc
+#         self.bcc = bcc
+#         self.subject = subject
+#         self.content = content
+#
+#
+#
+#
+# _reader = EnronReader("../data/")

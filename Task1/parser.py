@@ -2,9 +2,11 @@ import io
 import os
 from enron_reader import EnronReader
 import json
+
 # import pickle
 
 _reader = EnronReader("data/subset/")
+
 
 def _getMailBoxes():
     maxCount = len(_reader.get_user_ids())
@@ -12,9 +14,9 @@ def _getMailBoxes():
     mailboxes = {}
     messages = {}
     for userID in _reader.get_user_ids():
-       
-        count+=1
-        print('\rFetching Mailboxes: '+str(count/maxCount *100)+'%                         ',end='')
+
+        count += 1
+        print('\rFetching Mailboxes: ' + str(count / maxCount * 100) + '%                         ', end='')
 
         mailbox = _reader.get_mailbox_for_user(userID)
         main_folders = mailbox.root_folder.subfolders
@@ -23,7 +25,6 @@ def _getMailBoxes():
             print(
                 f'\n\nMain Folders for "{userID}" were not found!\nSkipping...\n')
             continue;
-            
 
         inbox_folder = main_folders[1]
         messages.clear()
@@ -31,12 +32,10 @@ def _getMailBoxes():
         for message in inbox_folder.messages:
             message.email_from = message.email_from[1]
             message.email_to = [u[1] for u in message.email_to if message.email_to is not None]
-            message.plaintext.lower().replace('"',"'")
-
+            message.plaintext.lower().replace('"', "'")
 
             # msg = {'subject': message.subject, 'from': message.email_from,'to': message.email_to, 'text': message.plaintext}
             msg = {'subject': message.subject, 'text': message.plaintext}
-            
 
             if message.email_to is not None:
                 for recip in message.email_to:
@@ -68,36 +67,34 @@ def getDistinctAddrs(mailboxes):
     return _emailAddresses
 
 
-def combineMail(_emailAddresses,mailboxes):
+def combineMail(_emailAddresses, mailboxes):
     combinedMail = {}
     for userA in _emailAddresses:
         if mailboxes.get(userA) is None:
             continue
 
         for userB, messages in mailboxes[userA].items():
-            users = userA+userB
-            usersR = userB+userA
+            users = userA + userB
+            usersR = userB + userA
 
             if users in combinedMail or usersR in combinedMail:
                 continue
 
             combined = messages
-            
+
             if mailboxes.get(userB) is not None and mailboxes[userB].get(userA) is not None:
                 combined.extend(mailboxes[userB][userA])
             combinedMail[users] = combined
     return combinedMail
 
-def _docBuilder(mailboxes):    
-    
 
+def _docBuilder(mailboxes):
     _emailAddresses = getDistinctAddrs(mailboxes)
     combinedMail = combineMail(_emailAddresses, mailboxes)
 
     docs = {}
     for key, mail in combinedMail.items():
         [print(email) for email in mail if isinstance(email, list)]
-
 
         docs[key] = ""
         for email in mail:
@@ -112,13 +109,13 @@ def buildMailBoxes():
     if os.path.isfile(path) and os.access(path, os.R_OK):
         print("Mailboxes file found!")
         print('Reading...')
-        with open(path,'r') as f:
+        with open(path, 'r') as f:
             mailboxes = json.load(f)
 
     else:
         print("Either file is missing or is not readable, creating file...")
         mailboxes = _getMailBoxes()
-        _saveToFile(mailboxes,path=path)
+        _saveToFile(mailboxes, path=path)
     return mailboxes
 
 

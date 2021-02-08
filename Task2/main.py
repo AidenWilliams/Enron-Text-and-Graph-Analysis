@@ -3,24 +3,38 @@ from email.parser import Parser
 from tqdm import tqdm
 import json
 
-rootDir = os.path.join('..', 'maildir')
-myDict = {}
+rootDir = os.path.join('..', 'EnronEmails_Filtered', 'maildir')
+
+
+def splitEmails(maillist: str, tag):
+    split = maillist[tag]
+    split = split.replace("\n", "")
+    split = split.replace("\t", "")
+    split = split.replace(" ", "")
+    return split.split(',')
 
 
 def readMail(email):
-    update = {'subject': email['subject'], 'text': email.get_payload(), 'tos': []}
-
+    update = {'subject': email['subject'], 'text': email.get_payload(), 'tos': [], 'ccs': [], 'bccs': []}
     if email['to']:
-        email_to = email['to']
-        email_to = email_to.replace("\n", "")
-        email_to = email_to.replace("\t", "")
-        email_to = email_to.replace(" ", "")
-        update['tos'] = list(set(email_to.split(',')))
+        update['tos'] = list(set(splitEmails(email, 'to')))
+    if email['cc']:
+        update['ccs'] = list(set(splitEmails(email, 'cc')))
+        # This for if is O(n^2) it slows the parsing by a bit but it does remove duplicates in cc and bcc
+        # Still takes around a minute
+        for a in update['ccs']:
+            if a in update['tos']:
+                update['ccs'].remove(a)
+    if email['bcc']:
+        update['bccs'] = list(set(splitEmails(email, 'bcc')))
+        for a in update['bccs']:
+            if a in update['ccs']:
+                update['bccs'].remove(a)
     return update
 
 
 def addMail(dic, emailDir):
-    with open(emailDir, "r") as f:
+    with open(emailDir, "r", encoding='utf-8', errors='ignore') as f:
         email = Parser().parsestr(f.read())
         key = email['from']
         if key in dic:
@@ -75,5 +89,3 @@ def init(path="../intermediary/file.json"):
 
 myDict = {}
 init()
-
-

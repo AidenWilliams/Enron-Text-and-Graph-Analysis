@@ -71,7 +71,7 @@ def getMB():
         return mb
     else:
         print("Loading mailboxes")
-        pathMB = os.path.join('intermediary', 'submailboxes.json')
+        pathMB = os.path.join('intermediary', 'mailboxes.json')
         mb = _loadFromFile(pathMB)
         return mb
 
@@ -195,15 +195,16 @@ def getALLDocs(mb):
             for recip in msg['tos']:
                 if sender == recip:
                     continue
-                users = tuple(sender,recip)
-                usersR = tuple(recip, sender)
+                users = (sender,recip)
+                usersR = (recip, sender)
+
                 if users not in docs:
-                    docs[users] = set()
+                    docs[users] = []
                 if usersR in docs:
-                    docs[users].update(docs[usersR])
+                    docs[users].extend( docs[usersR])
                     del docs[usersR]
 
-                docs[users].add(msg['text'])
+                docs[users].extend( (msg['text']))
     return docs
 
 
@@ -224,23 +225,27 @@ def loadIfCan(func, path, arg=None,toSave = None):
 
 def vectorizeUsers(vDocs):
     vUsers = {}
-    vCounts = {}
-    vTotals = {}
-    for user in tqdm(getAllAddresses(),desc='Vectorizing Users'):
+    
+    for user in tqdm(getAllAddresses(getMB()),desc='Vectorizing Users'):
         relevantVecs = []
+        vCounts = {}
+        vTotals = {}
         for users in vDocs:
             if user in users:
                 relevantVecs.append(vDocs[users])
         for vec in relevantVecs:
-            for key,value in vec:
-                if key in vCounts:
-                    vCounts[key]+=1
-                    vTotals[key]+=value
+            for word, value in vec.items():
+                if word in vCounts:
+                    vCounts[word] += 1
+                    vTotals[word] += value
                 else:
-                    vCounts[key]=1
-                    vTotals[key]=value
+                    vCounts[word]=1
+                    vTotals[word] = value
         for key in vCounts:
+            if user not in vUsers:
+                vUsers[user] = {}
             vUsers[user][key] = vTotals[key]/vCounts[key]
+                
     return vUsers
 
 
@@ -250,14 +255,15 @@ def vectorizeUsers(vDocs):
 if __name__ == '__main__':
     getStats(getMB())
 
-    loadIfCan(preProcessAll, os.path.join('intermediary', 'sppMailBoxes.json'), arg = getMB(),toSave=getMB())
+    loadIfCan(preProcessAll, os.path.join('intermediary', 'ppMailBoxes.json'), arg = getMB(),toSave=getMB())
 
     docs = getALLDocs(getMB())
 
-    # vectors = vectorizeDocs(docs) 
-    vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
 
-    vectorUsers = loadIfCan(vectorizeUsers, os.path.join('intermediary', 'svectorizedUsers.json'), vectorDocs)
+    # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
+    vectorDocs = vectorizeDocs(docs)
+
+    vectorUsers = loadIfCan(vectorizeUsers, os.path.join('intermediary', 'vectorizedUsers.json'), arg=vectorDocs)
 
 
 

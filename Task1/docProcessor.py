@@ -7,7 +7,6 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 
-
 def _saveToFile(data, path):
     print('Saving')
     with open(path, 'w') as fp:
@@ -15,6 +14,7 @@ def _saveToFile(data, path):
 
 
 def _loadFromFile(path):
+    print('loading from file')
     with open(path) as f:
         return json.load(f)
 
@@ -70,7 +70,7 @@ def getMB():
         return mb
     else:
         print("Loading mailboxes")
-        pathMB = os.path.join('intermediary', 'mailboxes.json')
+        pathMB = os.path.join('intermediary', 'submailboxes.json')
         mb = _loadFromFile(pathMB)
         return mb
 
@@ -87,13 +87,13 @@ def preProcess(doc):
 
     # for s in symbols:
     #     doc = doc.replace(s, '')
-
+    
     tokens = nltk.tokenize.word_tokenize(doc)  # tokenization
     # tokens = [t.lower() for t in tokens]  # case folding ?
 
-    tokens = [t.lower() for t in tokens if t not in stopWords]  # stop word removal
+    tokens = [stemmer.stem(t.lower()) for t in tokens if t not in stopWords]  # stop word removal
 
-    tokens = [stemmer.stem(d) for d in tokens]  # stemming
+    # tokens = [stemmer.stem(d) for d in tokens]  # stemming
 
     return tokens
 
@@ -177,20 +177,19 @@ def vectorizeDocs(docs):
 
 
 def preProcessAll(mailboxes):
-    for sender,msgs in dict(mailboxes).items():        
+    newMailboxes = {}
+    for sender, msgs in mailboxes.items():
         for msg in msgs:
-            if sender not in mailboxes:
-                continue
+            if msg['tos']:
+                if sender not in newMailboxes:
+                    newMailboxes[sender] = []
+                newMailboxes[sender].append(msg)
 
-            if not msg['tos']:
-                msgs.remove(msg)
-                # mailboxes[sender] = msgs
-            if not mailboxes[sender]:
-                del mailboxes[sender]
-
-    for msgs in tqdm(mailboxes.values(),desc='PreProcessing'):
-        for msg in msgs:
+    for sender in tqdm(newMailboxes, desc='PreProcessing'):
+        for msg in newMailboxes[sender]:
             msg['text'] = preProcess(msg['text'])
+
+    return newMailboxes
 
 
 
@@ -259,16 +258,14 @@ def vectorizeUsers(vDocs):
                 
 
 if __name__ == '__main__':
+    
     getStats(getMB())
 
-    loadIfCan(preProcessAll, os.path.join('intermediary', 'ppMailBoxes.json'), arg = getMB(),toSave=getMB())
-
+    mb = loadIfCan(preProcessAll, os.path.join('intermediary', 'sppMailBoxes.json'), arg = getMB())
     docs = getALLDocs(getMB())
-
-
     # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
     vectorDocs = vectorizeDocs(docs)
-    vectorUsers = loadIfCan(vectorizeUsers, os.path.join('intermediary', 'vectorizedUsers.json'), arg=vectorDocs)
+    vectorUsers = loadIfCan(vectorizeUsers, os.path.join('intermediary', 'svectorizedUsers.json'), arg=vectorDocs)
 
 
 

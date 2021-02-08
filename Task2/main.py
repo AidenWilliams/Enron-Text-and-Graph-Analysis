@@ -2,8 +2,9 @@ import os
 from email.parser import Parser
 from tqdm import tqdm
 import json
+import networkx as nx
 
-rootDir = os.path.join('..', 'EnronEmails_Filtered', 'maildir')
+dataroot = os.path.join('..', 'EnronEmails_Filtered', 'maildir')
 
 
 def splitEmails(maillist: str, tag):
@@ -64,7 +65,7 @@ def loadData(dic, root):
                 continue
 
             for file in os.listdir(folderPath):
-                addAll(dic, os.path.join(rootDir, user, folder, file))
+                addAll(dic, os.path.join(dataroot, user, folder, file))
 
 
 def _saveToFile(data, path):
@@ -73,19 +74,75 @@ def _saveToFile(data, path):
         json.dump(data, fp, indent=4)
 
 
-def init(path="../intermediary/file.json"):
-    myDict = {}
-    if os.path.isfile(path) and os.access(path, os.R_OK):
-        print("Docs file found!")
-        print('Reading...')
-        with open(path, 'r') as f:
-            myDict = json.load(f)
+class Edge:
+    def __init__(self, alias1: str, alias2: str, weight=0):
+        self.alias1 = alias1
+        self.alias2 = alias2
+        self.weight = weight
 
+
+edges = {}
+
+
+def addEdgeToDict(frm, to):
+    key = tuple([frm, to])
+    if key in edges.keys():
+        w = edges.get(key)
+        w += 1
+        edges.update({key: w})
     else:
-        print("Either file is missing or is not readable, creating file...")
-        loadData(myDict, rootDir)
-        _saveToFile(myDict, path=path)
+        edges.update({key: 1})
 
 
 myDict = {}
-init()
+path = "../intermediary/file.json"
+if os.path.isfile(path) and os.access(path, os.R_OK):
+    print("Docs file found!")
+    print('Reading...')
+    with open(path, 'r') as f:
+        myDict = json.load(f)
+    print("...done!")
+
+else:
+    print("Either file is missing or is not readable, creating file...")
+    loadData(myDict, dataroot)
+    _saveToFile(myDict, path=path)
+G = nx.DiGraph()
+
+# get set of users
+print("Reading Users")
+users = {_from for _from in myDict.keys()}
+for k in tqdm(myDict.keys()):
+    emails = myDict.get(k)
+    for e in emails:
+        for t in e['tos']:
+            users.update(t)
+        for c in e['ccs']:
+            users.update(c)
+        for b in e['bccs']:
+            users.update(b)
+
+print("Building Users")
+# weight dict
+for _from in myDict.keys():
+    e = myDict.get(_from)
+    for t in e['tos']:
+        addEdgeToDict(_from, t)
+    for c in e['ccs']:
+        addEdgeToDict(_from, c)
+    for b in e['bccs']:
+        addEdgeToDict(_from, b)
+# for tweet in tweets:
+#     if "@" in tweet.content:
+#         mentions = re.findall("@(\w+)", tweet.content)
+#         for mention in mentions:
+#             key = tuple([tweet.alias, mention])
+#             if key in edges.keys():
+#                 w = edges.get(key)
+#                 w += 1
+#                 edges.update({key: w})
+#             else:
+#                 edges.update({key: 1})
+#
+# for edge in edges.keys():
+#     G.add_edge(edge[0], edge[1], weight=edges.get(edge))

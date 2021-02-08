@@ -172,40 +172,41 @@ def vectorizeDocs(docs):
     return tfidfs
 
 
-def getALLDocs(mb):
-    addrs = getAllAddresses(mb)
-    docs={}
-    for A in tqdm(addrs,desc='Getting Docs'):
-        for B in addrs:
-            if A == B or B+A in docs or A+B in docs:
-                continue 
-            doc = getDoc(mb, A, B)
-            if doc is not None and doc != "":
-                docs[A+B] = doc
-    return docs
+# def getALLDocs(mb):
+#     addrs = getAllAddresses(mb)
+#     docs={}
+#     for A in tqdm(addrs,desc='Getting Docs'):
+#         for B in addrs:
+#             if A == B or B+A in docs or A+B in docs:
+#                 continue 
+#             doc = getDoc(mb, A, B)
+#             if doc is not None and doc != "":
+#                 docs[A+B] = doc
+#     return docs
 
 
 def getALLDocsSpeedy(mb):
-    addrs = getAllAddresses(mb)
     docs = {}
     for sender, messages in tqdm(mb.items(), desc='Getting Docs'):
         for msg in messages:
+            msg['text'] = preProcess(msg['text'])
             for recip in msg['tos']:
                 if sender == recip:
                     continue
 
                 if sender+recip not in docs:
-                    docs[sender+recip] = ""
+                    docs[sender+recip] = []
                 if recip+sender in docs:                    
-                    docs[sender+recip] += docs[recip+sender]
+                    docs[sender+recip].extend( docs[recip+sender])
                     del docs[recip+sender]                
-                docs[sender+recip] += msg['text']
+                docs[sender+recip].extend( msg['text'])
+    return docs
         
 
 
 
-def ppALL(docs):
-    return [preProcess(item) for item in tqdm(docs.values(), desc='Pre-Processing')]
+# def ppALL(docs):
+#     return [preProcess(item) for item in tqdm(docs.values(), desc='Pre-Processing')]
 
 
 if __name__ == '__main__':
@@ -213,7 +214,7 @@ if __name__ == '__main__':
     docs = getALLDocsSpeedy(getMB())
     
     # docs = [preProcess(item) for item in tqdm(docs,desc='Pre-Processing')]
-    docs = ppALL(docs)
+    # docs = ppALL(docs)
     _saveToFile(docs, os.path.join('intermediary', 'doc.json'))
     vectors = vectorizeDocs(docs) 
     _saveToFile(vectors, os.path.join('intermediary', 'doc_vecs2.json'))

@@ -86,10 +86,10 @@ edges = {}
 
 def addEdgeToDict(frm, to):
     key = tuple([frm, to])
-    if key in edges.keys():
+    if key in edges:
         w = edges.get(key)
         w += 1
-        edges.update({key: w})
+        edges[key] = w
     else:
         edges.update({key: 1})
 
@@ -109,40 +109,28 @@ else:
     _saveToFile(myDict, path=path)
 G = nx.DiGraph()
 
-# get set of users
-print("Reading Users")
-users = {_from for _from in myDict.keys()}
-for k in tqdm(myDict.keys()):
-    emails = myDict.get(k)
+# # get set of users
+# print("Reading Users")
+# users = {_from for _from in myDict.keys()}
+# for sender in tqdm(myDict):
+#     for email in myDict[sender]:
+#         users.update(email['tos'])
+#         users.update(email['ccs'])
+#         users.update(email['bccs'])
+
+print("\nBuilding Edges")
+# weight dict
+for _from in tqdm(myDict):
+    emails = myDict.get(_from)
     for e in emails:
         for t in e['tos']:
-            users.update(t)
+            addEdgeToDict(_from, t)
         for c in e['ccs']:
-            users.update(c)
+            addEdgeToDict(_from, c)
         for b in e['bccs']:
-            users.update(b)
+            addEdgeToDict(_from, b)
 
-print("Building Users")
-# weight dict
-for _from in myDict.keys():
-    e = myDict.get(_from)
-    for t in e['tos']:
-        addEdgeToDict(_from, t)
-    for c in e['ccs']:
-        addEdgeToDict(_from, c)
-    for b in e['bccs']:
-        addEdgeToDict(_from, b)
-# for tweet in tweets:
-#     if "@" in tweet.content:
-#         mentions = re.findall("@(\w+)", tweet.content)
-#         for mention in mentions:
-#             key = tuple([tweet.alias, mention])
-#             if key in edges.keys():
-#                 w = edges.get(key)
-#                 w += 1
-#                 edges.update({key: w})
-#             else:
-#                 edges.update({key: 1})
-#
-# for edge in edges.keys():
-#     G.add_edge(edge[0], edge[1], weight=edges.get(edge))
+for edge in tqdm(edges.keys()):
+    G.add_edge(edge[0], edge[1], weight=edges.get(edge))
+
+print("\nDone.")

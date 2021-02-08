@@ -1,9 +1,11 @@
 # from parser import myDict
+from multiprocessing import Pool
 import json,os,math
 from tqdm import tqdm
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
+
 
 
 def _saveToFile(data, path):
@@ -34,6 +36,10 @@ def getStats(mailboxes):
 
     addresses.update(mailboxes.keys())
     print(f'Thus there are {len(addresses)} unique addressees')
+    # _saveToFile(list(addresses),"Task1/tmp/addr.json")
+
+
+
 
 
 def getAllAddresses(mailboxes):
@@ -66,12 +72,13 @@ def getMB():
         return mb
     else:
         print("Loading mailboxes")
-        pathMB = os.path.join('intermediary', 'submailboxes.json')
+        pathMB = os.path.join('intermediary', 'mailboxes.json')
         mb = _loadFromFile(pathMB)
         return mb
 
 
 def preProcess(doc):
+    # print('starting pre')
     stemmer = nltk.stem.porter.PorterStemmer(
         nltk.stem.porter.PorterStemmer.ORIGINAL_ALGORITHM)
 
@@ -96,9 +103,13 @@ def preProcess(doc):
 def _weights(docs):
     wordWeights = []
     for doc in tqdm(docs,desc='Getting Weights'):
-        wordWeight = dict.fromkeys(uniqueWords, 0)
+        # wordWeight = dict.fromkeys(uniqueWords, 0)
+        wordWeight = {}
         for word in doc:
-            wordWeight[word] += 1
+            if word not in wordWeight:
+                wordWeight[word] = 1
+            else: 
+                wordWeight[word] += 1
         wordWeights.append(wordWeight)
 
     return wordWeights
@@ -114,10 +125,14 @@ def _TF(weights):
 
 def _IDF(wordWeights):
     N = len(wordWeights)
-    IDF = totalTF = dict.fromkeys(wordWeights[0].keys(), 0)
+    # IDF = totalTF = dict.fromkeys(wordWeights[0].keys(), 0)
+    IDF = totalTF = {}
     for wordWeight in tqdm(wordWeights,desc='IDF'):
         for word, weight in wordWeight.items():
-            totalTF[word] += weight
+            if word in totalTF:
+                totalTF[word] += weight
+            else:
+                totalTF[word] = weight
 
     for word, weight in totalTF.items():
         if float(weight) > 0:
@@ -147,7 +162,7 @@ def vectorizeDocs(docs):
     weights = _weights(docs)
 
     for i in tqdm(range(len(docs)),desc='TF'):
-        tfs.append(_TF(weights[i], True))
+        tfs.append(_TF(weights[i]))
 
     idf = _IDF(weights)
 
@@ -164,18 +179,44 @@ def getALLDocs(mb):
         for B in addrs:
             if A == B or B+A in docs or A+B in docs:
                 continue 
-
-            docs[A+B] = preProcess(getDoc(mb,A,B))
+            doc = getDoc(mb, A, B)
+            if doc is not None and doc != "":
+                docs[A+B] = doc
     return docs
 
 
+def getALLDocsSpeedy(mb):
+    addrs = getAllAddresses(mb)
+    docs = {}
+    for sender, messages in tqdm(mb.items(), desc='Getting Docs'):
+        for msg in messages:
+            for recip in msg['tos']:
+                if sender == recip:
+                    continue
+
+                if sender+recip not in docs:
+                    docs[sender+recip] = ""
+                if recip+sender in docs:                    
+                    docs[sender+recip] += docs[recip+sender]
+                    del docs[recip+sender]                
+                docs[sender+recip] += msg['text']
+        
 
 
-docs = getALLDocs(getMB())
-getStats(getMB())
-# docs = [preProcess(item) for item in tqdm(docs,desc='Pre-Processing')]
-vectors = vectorizeDocs(docs) 
-_saveToFile(vectors, os.path.join('intermediary', 'subdoc_vecs2.json'))
+
+def ppALL(docs):
+    return [preProcess(item) for item in tqdm(docs.values(), desc='Pre-Processing')]
+
+
+if __name__ == '__main__':
+    getStats(getMB())
+    docs = getALLDocsSpeedy(getMB())
+    
+    # docs = [preProcess(item) for item in tqdm(docs,desc='Pre-Processing')]
+    docs = ppALL(docs)
+    _saveToFile(docs, os.path.join('intermediary', 'doc.json'))
+    vectors = vectorizeDocs(docs) 
+    _saveToFile(vectors, os.path.join('intermediary', 'doc_vecs2.json'))
 
 
 

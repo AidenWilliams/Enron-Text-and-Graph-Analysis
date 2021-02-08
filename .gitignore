@@ -134,4 +134,4 @@ data/
 .vscode/
 intermediary/
 maildir/
-.idea/
+.idea/*

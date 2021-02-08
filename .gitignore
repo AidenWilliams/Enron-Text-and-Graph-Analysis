@@ -135,3 +135,5 @@ data/
 intermediary/
 maildir/
 Task1/tmp/
+.idea/*
+

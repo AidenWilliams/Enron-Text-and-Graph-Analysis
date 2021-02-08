@@ -24,8 +24,7 @@ def getStats(mailboxes):
     for sender in tqdm(mailboxes):
         for email in mailboxes[sender]:
             emailCount += 1
-            if len(email['tos']) > 0:
-
+            if email['tos']:
                 addresses.update(email['tos'])
                 count += 1
                 tosCount += len(email['tos'])
@@ -45,7 +44,7 @@ def getAllAddresses(mailboxes):
     addresses = set()
     for sender in mailboxes:
         for email in mailboxes[sender]:
-            if len(email['tos']) > 0:
+            if email['tos']:
                 addresses.update(email['tos'])
     addresses.update(mailboxes.keys())
     return addresses
@@ -84,6 +83,7 @@ def preProcess(doc):
     stopWords = set(nltk.corpus.stopwords.words('english'))
 
     # symbols = "!\"#$%&()*+-–./:;“<=>?@[\]^_`,'{”|}~\n"
+    # symbols = "-.,:?\n"
 
     # for s in symbols:
     #     doc = doc.replace(s, '')
@@ -102,6 +102,8 @@ def preProcess(doc):
 def _weights(docs):
     wordWeights = {}
     for key,doc in tqdm(docs.items(),desc='Getting Weights'):
+        if not doc:
+            continue
         # wordWeight = dict.fromkeys(uniqueWords, 0)
         wordWeight = {}
         for word in doc:
@@ -115,7 +117,10 @@ def _weights(docs):
 
 def _TF(weights):
     TF = {}
+    # if weights:
     maxTF = max(weights.values())
+    # else:
+    #     maxTF = 1
     for word, weight in weights.items():
         if(weight > 0):
             TF[word] = weight / float(maxTF)
@@ -135,7 +140,7 @@ def _IDF(wordWeights):
 
     for word, weight in totalTF.items():
         if float(weight) > 0:
-            IDF[word] = math.log(N/float(weight))
+            IDF[word] = math.log(1+N/1+float(weight))
         else:
             print('0 idf: '+word)
             IDF[word] = 0
@@ -178,7 +183,8 @@ def preProcessAll(mailboxes):
                 continue
 
             if not msg['tos']:
-                mailboxes[sender] = msgs.remove(msg)
+                msgs.remove(msg)
+                # mailboxes[sender] = msgs
             if not mailboxes[sender]:
                 del mailboxes[sender]
 
@@ -262,7 +268,6 @@ if __name__ == '__main__':
 
     # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
     vectorDocs = vectorizeDocs(docs)
-
     vectorUsers = loadIfCan(vectorizeUsers, os.path.join('intermediary', 'vectorizedUsers.json'), arg=vectorDocs)
 
 

@@ -184,12 +184,18 @@ def vectorizeDocs(docs):
 #                 docs[A+B] = doc
 #     return docs
 
+def ppPRE(mailboxes):
+
+    for msgs in tqdm(mailboxes.values(),desc='PreProcessing'):
+        for msg in msgs:
+            if msg['tos']:
+                msg['text'] = preProcess(msg['text'])
 
 def getALLDocsSpeedy(mb):
     docs = {}
     for sender, messages in tqdm(mb.items(), desc='Getting Docs'):
         for msg in messages:
-            msg['text'] = preProcess(msg['text'])
+            # msg['text'] = preProcess(msg['text'])
             for recip in msg['tos']:
                 if sender == recip:
                     continue
@@ -198,7 +204,9 @@ def getALLDocsSpeedy(mb):
                     docs[sender+recip] = []
                 if recip+sender in docs:                    
                     docs[sender+recip].extend( docs[recip+sender])
-                    del docs[recip+sender]                
+                    del docs[recip+sender]
+
+
                 docs[sender+recip].extend( msg['text'])
     return docs
         
@@ -209,15 +217,35 @@ def getALLDocsSpeedy(mb):
 #     return [preProcess(item) for item in tqdm(docs.values(), desc='Pre-Processing')]
 
 
+def loadIfCan(func, path, arg=None):
+    if os.path.exists(path):
+        return _loadFromFile(path)
+
+    if arg is None:
+        item = func()
+    else:
+        item = func(arg)
+
+    _saveToFile(item, path)
+    return item
+
 if __name__ == '__main__':
     getStats(getMB())
+    # ppPRE(mb)
+
+    # _saveToFile(docs, os.path.join('intermediary', 'sub','preProcessed.json'))
+    # _saveToFile(mb, )
+
+    mb = loadIfCan(ppPRE, os.path.join('intermediary', 'ppMailBoxes.json'),getMB())
+
     docs = getALLDocsSpeedy(getMB())
-    
-    # docs = [preProcess(item) for item in tqdm(docs,desc='Pre-Processing')]
-    # docs = ppALL(docs)
-    _saveToFile(docs, os.path.join('intermediary', 'doc.json'))
+
     vectors = vectorizeDocs(docs) 
-    _saveToFile(vectors, os.path.join('intermediary', 'doc_vecs2.json'))
+    vectors = mb = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'vectorized.json'), docs)
+
+    # _saveToFile(vectors, os.path.join('intermediary','sub','vectorized.json'))
+    # _saveToFile(vectors, os.path.join('intermediary','vectorized.json'))
+
 
 
 

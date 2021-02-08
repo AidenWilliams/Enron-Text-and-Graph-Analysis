@@ -36,7 +36,6 @@ def getStats(mailboxes):
 
     addresses.update(mailboxes.keys())
     print(f'Thus there are {len(addresses)} unique addressees')
-    # _saveToFile(list(addresses),"Task1/tmp/addr.json")
 
 
 
@@ -72,7 +71,7 @@ def getMB():
         return mb
     else:
         print("Loading mailboxes")
-        pathMB = os.path.join('intermediary', 'mailboxes.json')
+        pathMB = os.path.join('intermediary', 'submailboxes.json')
         mb = _loadFromFile(pathMB)
         return mb
 
@@ -101,8 +100,8 @@ def preProcess(doc):
 
 
 def _weights(docs):
-    wordWeights = []
-    for doc in tqdm(docs,desc='Getting Weights'):
+    wordWeights = {}
+    for key,doc in tqdm(docs.items(),desc='Getting Weights'):
         # wordWeight = dict.fromkeys(uniqueWords, 0)
         wordWeight = {}
         for word in doc:
@@ -110,7 +109,7 @@ def _weights(docs):
                 wordWeight[word] = 1
             else: 
                 wordWeight[word] += 1
-        wordWeights.append(wordWeight)
+        wordWeights[key] = wordWeight
 
     return wordWeights
 
@@ -127,7 +126,7 @@ def _IDF(wordWeights):
     N = len(wordWeights)
     # IDF = totalTF = dict.fromkeys(wordWeights[0].keys(), 0)
     IDF = totalTF = {}
-    for wordWeight in tqdm(wordWeights,desc='IDF'):
+    for wordWeight in tqdm(wordWeights.values(),desc='IDF'):
         for word, weight in wordWeight.items():
             if word in totalTF:
                 totalTF[word] += weight
@@ -156,68 +155,59 @@ def _TFIDF(TF, IDF):
 
 def vectorizeDocs(docs):
     print('vectorizing')
-    tfidfs = []
-    tfs = []
+    tfidfs = {}
+    tfs = {}
 
     weights = _weights(docs)
 
-    for i in tqdm(range(len(docs)),desc='TF'):
-        tfs.append(_TF(weights[i]))
+    for key,w in tqdm(weights.items(),desc='TF'):
+        tfs[key] = (_TF(w))
 
     idf = _IDF(weights)
 
-    for tf in tqdm(tfs,desc='TFIDF'):
-        tfidfs.append(_TFIDF(tf, idf))
+    for key,tf in tqdm(tfs.items(),desc='TFIDF'):
+        tfidfs[key] = (_TFIDF(tf, idf))
     print('done vectorizing')
     return tfidfs
 
 
-# def getALLDocs(mb):
-#     addrs = getAllAddresses(mb)
-#     docs={}
-#     for A in tqdm(addrs,desc='Getting Docs'):
-#         for B in addrs:
-#             if A == B or B+A in docs or A+B in docs:
-#                 continue 
-#             doc = getDoc(mb, A, B)
-#             if doc is not None and doc != "":
-#                 docs[A+B] = doc
-#     return docs
+def preProcessAll(mailboxes):
+    for sender,msgs in dict(mailboxes).items():        
+        for msg in msgs:
+            if sender not in mailboxes:
+                continue
 
-def ppPRE(mailboxes):
+            if not msg['tos']:
+                mailboxes[sender] = msgs.remove(msg)
+            if not mailboxes[sender]:
+                del mailboxes[sender]
 
     for msgs in tqdm(mailboxes.values(),desc='PreProcessing'):
         for msg in msgs:
-            if msg['tos']:
-                msg['text'] = preProcess(msg['text'])
+            msg['text'] = preProcess(msg['text'])
 
-def getALLDocsSpeedy(mb):
+
+
+def getALLDocs(mb):
     docs = {}
     for sender, messages in tqdm(mb.items(), desc='Getting Docs'):
         for msg in messages:
-            # msg['text'] = preProcess(msg['text'])
             for recip in msg['tos']:
                 if sender == recip:
                     continue
+                users = tuple(sender,recip)
+                usersR = tuple(recip, sender)
+                if users not in docs:
+                    docs[users] = set()
+                if usersR in docs:
+                    docs[users].update(docs[usersR])
+                    del docs[usersR]
 
-                if sender+recip not in docs:
-                    docs[sender+recip] = []
-                if recip+sender in docs:                    
-                    docs[sender+recip].extend( docs[recip+sender])
-                    del docs[recip+sender]
-
-
-                docs[sender+recip].extend( msg['text'])
+                docs[users].add(msg['text'])
     return docs
-        
 
 
-
-# def ppALL(docs):
-#     return [preProcess(item) for item in tqdm(docs.values(), desc='Pre-Processing')]
-
-
-def loadIfCan(func, path, arg=None):
+def loadIfCan(func, path, arg=None,toSave = None):
     if os.path.exists(path):
         return _loadFromFile(path)
 
@@ -226,25 +216,48 @@ def loadIfCan(func, path, arg=None):
     else:
         item = func(arg)
 
+    if toSave is not None:
+        item = toSave
     _saveToFile(item, path)
     return item
 
+
+def vectorizeUsers(vDocs):
+    vUsers = {}
+    vCounts = {}
+    vTotals = {}
+    for user in tqdm(getAllAddresses(),desc='Vectorizing Users'):
+        relevantVecs = []
+        for users in vDocs:
+            if user in users:
+                relevantVecs.append(vDocs[users])
+        for vec in relevantVecs:
+            for key,value in vec:
+                if key in vCounts:
+                    vCounts[key]+=1
+                    vTotals[key]+=value
+                else:
+                    vCounts[key]=1
+                    vTotals[key]=value
+        for key in vCounts:
+            vUsers[user][key] = vTotals[key]/vCounts[key]
+    return vUsers
+
+
+
+                
+
 if __name__ == '__main__':
     getStats(getMB())
-    # ppPRE(mb)
 
-    # _saveToFile(docs, os.path.join('intermediary', 'sub','preProcessed.json'))
-    # _saveToFile(mb, )
+    loadIfCan(preProcessAll, os.path.join('intermediary', 'sppMailBoxes.json'), arg = getMB(),toSave=getMB())
 
-    mb = loadIfCan(ppPRE, os.path.join('intermediary', 'ppMailBoxes.json'),getMB())
+    docs = getALLDocs(getMB())
 
-    docs = getALLDocsSpeedy(getMB())
+    # vectors = vectorizeDocs(docs) 
+    vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
 
-    vectors = vectorizeDocs(docs) 
-    vectors = mb = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'vectorized.json'), docs)
-
-    # _saveToFile(vectors, os.path.join('intermediary','sub','vectorized.json'))
-    # _saveToFile(vectors, os.path.join('intermediary','vectorized.json'))
+    vectorUsers = loadIfCan(vectorizeUsers, os.path.join('intermediary', 'svectorizedUsers.json'), vectorDocs)
 
 
 

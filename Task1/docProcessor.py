@@ -7,6 +7,7 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 
+
 def _saveToFile(data, path):
     print('Saving')
     with open(path, 'w') as fp:
@@ -42,8 +43,8 @@ def getStats(mailboxes):
 
 def getAllAddresses(mailboxes):
     addresses = set()
-    for sender in mailboxes:
-        for email in mailboxes[sender]:
+    for sender,emails in mailboxes.items():
+        for email in emails:
             if email['tos']:
                 addresses.update(email['tos'])
     addresses.update(mailboxes.keys())
@@ -63,18 +64,6 @@ def getDoc(mailboxes,A,B):
     return AB
 
 
-mb = None
-def getMB():
-    global mb
-    if mb is not None:
-        return mb
-    else:
-        print("Loading mailboxes")
-        pathMB = os.path.join('intermediary', 'submailboxes.json')
-        mb = _loadFromFile(pathMB)
-        return mb
-
-
 def preProcess(doc):
     # print('starting pre')
     stemmer = nltk.stem.porter.PorterStemmer(
@@ -82,11 +71,11 @@ def preProcess(doc):
 
     stopWords = set(nltk.corpus.stopwords.words('english'))
 
-    # symbols = "!\"#$%&()*+-–./:;“<=>?@[\]^_`,'{”|}~\n"
+    symbols = "!\"#$%&()*+-–./:;“<=>?@[\]^_`,'{”|}~\n"
     # symbols = "-.,:?\n"
 
-    # for s in symbols:
-    #     doc = doc.replace(s, '')
+    for s in symbols:
+        doc = doc.replace(s, '')
     
     tokens = nltk.tokenize.word_tokenize(doc)  # tokenization
     # tokens = [t.lower() for t in tokens]  # case folding ?
@@ -193,9 +182,9 @@ def preProcessAll(mailboxes):
 
 
 
-def getALLDocs(mb):
+def getALLDocs(mbxs):
     docs = {}
-    for sender, messages in tqdm(mb.items(), desc='Getting Docs'):
+    for sender, messages in tqdm(mbxs.items(), desc='Getting Docs'):
         for msg in messages:
             for recip in msg['tos']:
                 if sender == recip:
@@ -228,10 +217,12 @@ def loadIfCan(func, path, arg=None,toSave = None):
     return item
 
 
-def vectorizeUsers(vDocs):
+def vectorizeUsers(data):
+    vDocs = data['vd']
+    mb = data['mb']
     vUsers = {}
     
-    for user in tqdm(getAllAddresses(getMB()),desc='Vectorizing Users'):
+    for user in tqdm(getAllAddresses(mb),desc='Vectorizing Users'):
         relevantVecs = []
         vCounts = {}
         vTotals = {}
@@ -258,14 +249,21 @@ def vectorizeUsers(vDocs):
                 
 
 if __name__ == '__main__':
-    
-    getStats(getMB())
+    var = 'subset'
+    root = os.path.join('data', var)
 
-    mb = loadIfCan(preProcessAll, os.path.join('intermediary', 'sppMailBoxes.json'), arg = getMB())
-    docs = getALLDocs(getMB())
+    workDir = os.path.join('intermediary', var)
+
+    with open(os.path.join(workDir, 'mb.json'), 'r') as f:
+        mb = json.load(f)
+
+    getStats(mb)
+
+    mb = loadIfCan(preProcessAll, os.path.join(workDir, 'preProcessed.json'), arg=mb)
+    docs = getALLDocs(mb)
     # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
     vectorDocs = vectorizeDocs(docs)
-    vectorUsers = loadIfCan(vectorizeUsers, os.path.join('intermediary', 'svectorizedUsers.json'), arg=vectorDocs)
+    vectorUsers = loadIfCan(vectorizeUsers, os.path.join(workDir, 'vectorizedUsers.json'), arg={'mb':mb, 'vd':vectorDocs})
 
 
 

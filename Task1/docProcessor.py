@@ -1,6 +1,9 @@
 # from parser import myDict
 import json,os,math
 from tqdm import tqdm
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
 
 
 def _saveToFile(data, path):
@@ -30,7 +33,7 @@ def getStats(mailboxes):
     print(f'There are {count} which have addressees, with a total of {tosCount} addressees, {len(addresses)} of which are unique')
 
     addresses.update(mailboxes.keys())
-    print(f'Thus there are {len(addresses)} unique total emails mentioned')
+    print(f'Thus there are {len(addresses)} unique addressees')
 
 
 def getAllAddresses(mailboxes):
@@ -68,12 +71,29 @@ def getMB():
         return mb
 
 
+def preProcess(doc):
+    stemmer = nltk.stem.porter.PorterStemmer(
+        nltk.stem.porter.PorterStemmer.ORIGINAL_ALGORITHM)
+
+    stopWords = set(nltk.corpus.stopwords.words('english'))
+
+    # symbols = "!\"#$%&()*+-–./:;“<=>?@[\]^_`,'{”|}~\n"
+
+    # for s in symbols:
+    #     doc = doc.replace(s, '')
+
+    tokens = nltk.tokenize.word_tokenize(doc)  # tokenization
+    # tokens = [t.lower() for t in tokens]  # case folding ?
+
+    tokens = [t.lower() for t in tokens if t not in stopWords]  # stop word removal
+
+    tokens = [stemmer.stem(d) for d in tokens]  # stemming
+
+    return tokens
+
+
+
 def _weights(docs):
-    uniqueWords = []
-    for doc in tqdm(docs,desc='Getting Words'):
-        for word in doc:
-            if word not in uniqueWords:
-                uniqueWords.append(word)
     wordWeights = []
     for doc in tqdm(docs,desc='Getting Weights'):
         wordWeight = dict.fromkeys(uniqueWords, 0)
@@ -83,9 +103,9 @@ def _weights(docs):
 
     return wordWeights
 
-def _TF(weights, normal):
+def _TF(weights):
     TF = {}
-    maxTF = max(weights.values()) if normal else 1
+    maxTF = max(weights.values())
     for word, weight in weights.items():
         if(weight > 0):
             TF[word] = weight / float(maxTF)
@@ -145,10 +165,15 @@ def getALLDocs(mb):
             if A == B or B+A in docs or A+B in docs:
                 continue 
 
-            docs[A+B] = getDoc(mb,A,B)
+            docs[A+B] = preProcess(getDoc(mb,A,B))
     return docs
 
+
+
+
 docs = getALLDocs(getMB())
+getStats(getMB())
+# docs = [preProcess(item) for item in tqdm(docs,desc='Pre-Processing')]
 vectors = vectorizeDocs(docs) 
 _saveToFile(vectors, os.path.join('intermediary', 'subdoc_vecs2.json'))
 

@@ -3,10 +3,7 @@ import json,os
 from tqdm import tqdm
 
 
-docs = {}
-
-def docBuilder(mailboxes):
-    global docs
+def docBuilder(docs, mailboxes):
     docs = {}
     emails = mailboxes.keys()
     for sender in tqdm(emails):
@@ -40,7 +37,7 @@ def docBuilder(mailboxes):
 
 
 
-def checkDuplicates():
+def _checkDuplicates(mailboxes):
     print('checking doubles')
     for emailA in tqdm(mailboxes.keys()):
         for emailB in mailboxes.keys():
@@ -55,47 +52,48 @@ def _saveToFile(data, path):
         json.dump(data, fp, indent=4)
 
 
+def _loadFromFile(path):    
+    with open(path) as f:
+        return json.load(f)
+
+
+
+def stats():
+    emailCount = count = tosCount = uniqueAdd = 0
+    addresses = set()
+    for sender in tqdm(mailboxes):
+        for email in mailboxes[sender]:
+            emailCount += 1
+            if len(email['tos']) > 0:
+
+                addresses.update(email['tos'])
+                count += 1
+                tosCount += len(email['tos'])
+
+    print(f'There are {len(mailboxes.keys())} unique senders')
+    print(f'There is also a total of {emailCount} emails')
+    print(f'There are {count} which have addressees, with a total of {tosCount} addressees, {len(addresses)} of which are unique')
+
+    addresses.update(mailboxes.keys())
+    print(f'Thus there are {len(addresses)} unique total emails mentioned')
+
+
+
+def getDoc(mailboxes,A,B):
+    AB = ""
+    if A in mailboxes:
+        for email in mailboxes[A]:
+            if B in email['tos']:
+                AB += email['text']
+    if B in mailboxes:
+        for email in mailboxes[B]:
+            if A in email['tos']:
+                AB += email['text']
+    return AB
+
+
 pathMB = os.path.join('intermediary', 'mailboxes.json')
-with open(pathMB) as f:
-    mailboxes = json.load(f)
-
-
-path = os.path.join('intermediary', 'documents.json')
-
-
-emailCount = count = tosCount = uniqueAdd = 0
-
-
-addresses = set()
-for sender in tqdm(mailboxes):
-    for email in mailboxes[sender]:
-        emailCount += 1
-        if len(email['tos']) > 0:
-
-            addresses.update(email['tos'])
-            count += 1
-            tosCount += len(email['tos'])
-
-
-print(f'There are {len(mailboxes.keys())} unique senders')
-print(f'There is also a total of {emailCount} emails')
-print(f'There are {count} which have addressees, with a total of {tosCount} addressees, {len(addresses)} of which are unique')
-
-addresses.update(mailboxes.keys())
-print(f'Thus there are {len(addresses)} unique total emails mentioned')
-
-# if os.path.isfile(path) and os.access(path, os.R_OK):
-#     print("Docs file found!")
-#     print('Reading...')
-#     with open(path, 'r') as f:
-#         docs = json.load(f)
-
-# else:
-#     print("Either file is missing or is not readable, creating file...")
-#     docBuilder(mailboxes)
-#     checkDuplicates()
-#     _saveToFile(docs, path)
-
-
+mb = _loadFromFile(pathMB)
+print(getDoc(mb, 'heather.dunton@enron.com', 'michael.mcdonald@enron.com'))
 
 

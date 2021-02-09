@@ -39,6 +39,11 @@ def clusters():
     return render_template("Clusters.html")
 
 
+@app.route('/test', methods=['GET'])
+def test():
+    return " man hi how are you hello hello hello hello hello hello okay bro"
+
+
 
 
 if __name__ == '__main__':

@@ -2,8 +2,10 @@
 export default function define(runtime, observer) {
     const main = runtime.module();
     // const fileAttachments = new Map([["dream.txt", new URL("https://static.observableusercontent.com/files/929c5d4dc3c28e866a026b7f3403ab748c763dd385322f9dc657a5551e062d09fa5c7eb501b1efa2c0acc476146a9a18a70164806bd844cb4276985c0dd0bf23", import.meta.url)]]);
-    const fileAttachments = new Map([["dream.txt", new URL("/static/test.txt", import.meta.url)]]);
+    const fileAttachments = new Map([["dream.txt", new URL("/test", import.meta.url)]]);
+    // main.builtin("FileAttachment", runtime.fileAttachments((name,user) => {fileAttachments.get(name)+'?user='+user}));
     main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
+    // main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
     main.variable(observer()).define(["md"], function (md) {
         return (
             md`# Word Cloud
@@ -38,7 +40,13 @@ A demonstration of [d3-cloud](https://github.com/jasondavies/d3-cloud/). Paste i
     );
     main.variable(observer("viewof source")).define("viewof source", ["html", "FileAttachment"], async function (html, FileAttachment) {
         const textarea = html`<textarea rows=10>`;
-        textarea.value = (await FileAttachment("dream.txt").text()).trim();
+        // textarea.value = (await FileAttachment("dream.txt").text()).trim();
+        const data = await d3.text("/test",(data) => {return data;})
+        console.log('data:')
+        console.log(data)
+        textarea.value = data
+        
+
         textarea.style = `
   display: block;
   boxSizing: border-box;

@@ -12,6 +12,7 @@ def _loadFromFile(path):
 def topUserTerms(uVec,n):
     topTerms = {}
     for user,vec in tqdm(uVec.items(),desc='Top User Terms'):
+        user = user.split('@')[0]
         topTerms[user]= {}
         sortedTerms = {k: v for k, v in sorted(vec.items(), key=lambda item: item[1])}
 

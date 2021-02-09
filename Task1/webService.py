@@ -10,9 +10,8 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 @app.route('/', methods=['GET'])
-def homee():
-    return render_template('index.html', name='john')
-
+def home():
+    return redirect(url_for('userForce'))
 
 @app.route('/userGraphData', methods=['GET'])
 def usGraphDa():
@@ -34,21 +33,22 @@ def userCloudData():
     return jsonify(wordList)
 
 
-@app.route('/allUserClouds', methods=['GET'])
-def allUserCloudData():
-    # value = [{ 'word': "Running", 'size': "69" }, { 'word': "Surfing", 'size': "20" }, { 'word': "Climbing", 'size': "50" }, { 'word': "Kiting", 'size': "30" },{ 'word': "Sailing", 'size': "20" }, { 'word': "Snowboarding", 'size': "60" }]
-    termKey = list(topTerms.keys())[0]
-    return jsonify(topTerms[termKey])
+# @app.route('/allUserClouds', methods=['GET'])
+# def allUserCloudData():
+#     # value = [{ 'word': "Running", 'size': "69" }, { 'word': "Surfing", 'size': "20" }, { 'word': "Climbing", 'size': "50" }, { 'word': "Kiting", 'size': "30" },{ 'word': "Sailing", 'size': "20" }, { 'word': "Snowboarding", 'size': "60" }]
+#     termKey = list(topTerms.keys())[0]
+#     return jsonify(topTerms[termKey])
 
 
-@app.route('/allusers', methods=['GET'])
-def allUsers():
-    return jsonify(list(topTerms.keys()))
+# @app.route('/allusers', methods=['GET'])
+# def allUsers():
+#     return jsonify(list(topTerms.keys()))
 
 
 @app.route('/cloud', methods=['GET'])
 def ug():
-    return render_template('cloud.html')
+    return render_template('index.html', user='heather.dunton')
+
 
 
 @app.route('/users', methods=['GET'])

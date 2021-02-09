@@ -1,37 +1,65 @@
 {% extends "navbar.html" %}
 {% block content %}
-<div id="observablehq-0e773294">
-    <div class="observablehq-chart"></div>
-    <div class="observablehq-viewof-source"></div>
-    <div class="observablehq-source"></div>
-    <div class="observablehq-fontFamily"></div>
-    <div class="observablehq-fontScale"></div>
-    <div class="observablehq-rotate"></div>
-    <div class="observablehq-padding"></div>
-    <div class="observablehq-height"></div>
-    <div class="observablehq-words"></div>
-    <div class="observablehq-data"></div>
-    <div class="observablehq-stopwords"></div>
-    <div class="observablehq-d3"></div>
-</div>
-<script type="module">
-    import { Runtime, Inspector } from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
-    // import define from "https://api.observablehq.com/@d3/word-cloud.js?v=3";
-    import define from ".{{ url_for('static', filename = 'cloud.mjs') }}";
-    (new Runtime).module(define, name => {
-        if (name === "chart") return Inspector.into("#observablehq-0e773294 .observablehq-chart")();
-        // if (name === "viewof source") return Inspector.into("#observablehq-0e773294 .observablehq-viewof-source")();
-        // if (name === "source") return Inspector.into("#observablehq-0e773294 .observablehq-source")();
-        // if (name === "fontFamily") return Inspector.into("#observablehq-0e773294 .observablehq-fontFamily")();
-        // if (name === "fontScale") return Inspector.into("#observablehq-0e773294 .observablehq-fontScale")();
-        // if (name === "rotate") return Inspector.into("#observablehq-0e773294 .observablehq-rotate")();
-        // if (name === "padding") return Inspector.into("#observablehq-0e773294 .observablehq-padding")();
-        // if (name === "height") return Inspector.into("#observablehq-0e773294 .observablehq-height")();
-        // if (name === "words") return Inspector.into("#observablehq-0e773294 .observablehq-words")();
-        // if (name === "data") return Inspector.into("#observablehq-0e773294 .observablehq-data")();
-        // if (name === "stopwords") return Inspector.into("#observablehq-0e773294 .observablehq-stopwords")();
-        // if (name === "d3") return Inspector.into("#observablehq-0e773294 .observablehq-d3")();
+<h1>Welcome to the web dashboard!</h1>
+
+<p>Word Cloud for: {{user}}</p>
+
+<div id="my_dataviz"></div>
+
+
+<script>
+
+    var myWords = []
+    var url = "/userCloudData?user={{user}}";
+    d3.json(url, function (json) {
+        myWords = json
+        console.log(myWords)
+
+        // set the dimensions and margins of the graph
+        var margin = { top: 10, right: 10, bottom: 10, left: 10 },
+            width = 1800 - margin.left - margin.right,
+            height = 900 - margin.top - margin.bottom;
+
+        // append the svg object to the body of the page
+        var svg = d3.select("#my_dataviz").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        // Constructs a new cloud layout instance. It run an algorithm to find the position of words that suits your requirements
+        // Wordcloud features that are different from one word to the other must be here
+        var layout = d3.layout.cloud()
+            .size([width, height])
+            .words(myWords.map(function (d) { return { text: d.word, size: d.size }; }))
+            .padding(5)        //space between words
+            .rotate(function () { return ~~(Math.random() * 2) * 0; })
+            .fontSize(function (d) { return d.size; })      // font size of words
+            .on("end", draw);
+        layout.start();
+
+        // This function takes the output of 'layout' above and draw the words
+        // Wordcloud features that are THE SAME from one word to the other can be here
+        function draw(words) {
+            svg
+                .append("g")
+                .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+                .selectAll("text")
+                .data(words)
+                .enter().append("text")
+                .style("font-size", function (d) { return d.size; })
+                .style("fill", "#000")
+                .attr("text-anchor", "middle")
+                .style("font-family", "Impact")
+                .attr("transform", function (d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function (d) { return d.text; });
+        }
     });
+
+
 </script>
 
 {% endblock %}

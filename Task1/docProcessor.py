@@ -223,10 +223,14 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
-    for sender in tqdm(newMailboxes, desc=f'         PreProcessing'):
-        print('\r'+sender[:8]+'|'+str(len(newMailboxes[sender])), end='')
+    for sender in tqdm(newMailboxes, desc=f'               pp'):
+        print('\r   '+sender[:8]+'|'+str(len(newMailboxes[sender])), end='')
+        x = 0;
         for msg in newMailboxes[sender]:
+            x+=1
+            print(f'\r{x}', end='')
             msg['text'] = preProcess(msg['text'])
+        del mailboxes[sender]
 
     return newMailboxes
 

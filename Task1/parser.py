@@ -6,7 +6,8 @@ import json
 
 def readMail(email):
     update = {'subject': email['subject'],
-              'text': email.get_payload(), 'tos': []}
+              'text': email.get_payload()[:25000], 'tos': []} 
+    #limit text size to 25k characters; should be more than enough for normal email, but cuts down the outliers
 
     if email['to']:
         email_to = email['to']
@@ -74,7 +75,7 @@ def getMB(path,root):
     return myDict
 
 if __name__ == '__main__':
-    var = 'subset'
+    var = 'maildir'
     rootDir = os.path.join('data', var)
     path = os.path.join('intermediary', var, 'mb.json')
 

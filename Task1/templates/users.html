@@ -1,10 +1,22 @@
 {% extends "navbar.html" %}
 {% block content %}
 
-<h1>USERS!</h1>
-
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script type="text/javascript" src="{{ url_for('static', filename = 'force.js') }}"></script>
+<div id="observablehq-07371626">
+    <div class="observablehq-chart"></div>
+    <div class="observablehq-data"></div>
+    <div class="observablehq-height"></div>
+    <div class="observablehq-color"></div>
+    <div class="observablehq-drag"></div>
+    <div class="observablehq-d3"></div>
+</div>
+<script type="module">
+    import { Runtime, Inspector } from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+    // import define from "https://api.observablehq.com/@d3/force-directed-graph.js?v=3";
+    import define from ".{{ url_for('static', filename = 'force.mjs') }}";
+    (new Runtime).module(define, name => {
+        if (name === "chart") return Inspector.into("#observablehq-07371626 .observablehq-chart")();
+    });
+</script>
 
 
 {% endblock %}

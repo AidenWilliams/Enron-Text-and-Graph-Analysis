@@ -20,20 +20,19 @@ def userCloudData():
     return jsonify(value)
 
 
-@app.route('/users', methods=['GET'])
-def data():
+@app.route('/allusers', methods=['GET'])
+def allUsers():
     return jsonify(list(topTerms.keys()))
 
 
-@app.route('/usersGraph', methods=['GET'])
+@app.route('/cloud', methods=['GET'])
 def ug():
+    return render_template('cloud.html')
+
+
+@app.route('/users', methods=['GET'])
+def cloud():
     return render_template('users.html')
-
-
-@app.route('/force', methods=['GET'])
-def frc():
-    return render_template('force.html')
-
 
 @app.route('/clusters', methods=['GET'])
 def clusters():

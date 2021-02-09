@@ -106,7 +106,8 @@ def getUserGraph(vectorUsers):
 
     # rawNodes = gdb.getNodes(vectorUsers)
 
-    topNodes = topUsers(vectorUsers)
+    topNodes = topUsers(rawLinks)
+    print(f'topusers: {topNodes}')
     links = formatLinks(rawLinks, topNodes)
 
     # nodes = {'nodes': [{'id': name} for name in rawNodes]}
@@ -122,10 +123,10 @@ if __name__ == '__main__':
     var = 'maildir'
     workDir = os.path.join('intermediary', var)
     path = os.path.join(workDir, 'vectorizedUsers.json')
-
     
 
     vectorUsers = gdb._loadFromFile(path)
+
     userGraph = getUserGraph(vectorUsers)
     
 

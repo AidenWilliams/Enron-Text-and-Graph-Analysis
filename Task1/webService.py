@@ -1,10 +1,12 @@
 import flask,os
+from math import floor
 from tqdm import tqdm
 from flask import render_template,jsonify,request,redirect,url_for
 from flask import json
 import graphDataBuilder as gdb
 import mimetypes
 mimetypes.add_type('application/javascript', '.mjs')
+import numpy as np
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -73,15 +75,17 @@ def formatLinks(lnks,nodes):
 
             added.add((user, rec))
 
+            x = lnks[user][rec]
+            value = 30*1/(1/(1 + np.exp(-x)))
             fmtd.append({
                 'source': source,
                 'target': nrec,
-                'value': lnks[user][rec]
+                'value': value
                 })
 
     return {"links":fmtd}
 
-topCount = 500
+topCount = 100
 def topUsers(rawLinks):
     global topCount
     userTotals = {}
@@ -114,7 +118,7 @@ def getUserGraph(vectorUsers):
 
 if __name__ == '__main__':
 
-    var = 'subset'
+    var = 'maildir'
     workDir = os.path.join('intermediary', var)
     path = os.path.join(workDir, 'vectorizedUsers.json')
 

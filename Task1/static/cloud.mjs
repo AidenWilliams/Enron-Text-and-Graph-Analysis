@@ -105,7 +105,7 @@ A demonstration of [d3-cloud](https://github.com/jasondavies/d3-cloud/). Paste i
     });
     main.variable(observer("height")).define("height", function () {
         return (
-            500
+            600
         )
     });
     main.variable(observer("words")).define("words", ["source", "stopwords"], function (source, stopwords) {

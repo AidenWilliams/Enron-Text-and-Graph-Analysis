@@ -15,9 +15,6 @@ def home():
 
 @app.route('/userGraphData', methods=['GET'])
 def usGraphDa():
-    # data = []
-    # with open('Task1/static/miser.json','r') as f:
-    #     data = json.load(f)
     return jsonify(userGraph)
 
 @app.route('/userCloudData', methods=['GET'])
@@ -32,24 +29,9 @@ def userCloudData():
         wordList.append({'word':key,'size':value})
     return jsonify(wordList)
 
-
-# @app.route('/allUserClouds', methods=['GET'])
-# def allUserCloudData():
-#     # value = [{ 'word': "Running", 'size': "69" }, { 'word': "Surfing", 'size': "20" }, { 'word': "Climbing", 'size': "50" }, { 'word': "Kiting", 'size': "30" },{ 'word': "Sailing", 'size': "20" }, { 'word': "Snowboarding", 'size': "60" }]
-#     termKey = list(topTerms.keys())[0]
-#     return jsonify(topTerms[termKey])
-
-
-# @app.route('/allusers', methods=['GET'])
-# def allUsers():
-#     return jsonify(list(topTerms.keys()))
-
-
 @app.route('/cloud', methods=['GET'])
 def ug():
-    return render_template('index.html', user='heather.dunton')
-
-
+    return render_template('cloud.html', user='heather.dunton')
 
 @app.route('/users', methods=['GET'])
 def userForce():
@@ -58,15 +40,6 @@ def userForce():
 @app.route('/clusters', methods=['GET'])
 def clusters():
     return render_template("Clusters.html")
-
-
-@app.route('/test', methods=['GET'])
-def test():
-    file = {
-        'one': " man hi how are you hello hello hello hello hello hello okay bro",
-        'two': "hey homie was poppin!"
-    }
-    return jsonify(topTerms)
 
 
 @app.route('/topCount', methods=['GET','POST'])

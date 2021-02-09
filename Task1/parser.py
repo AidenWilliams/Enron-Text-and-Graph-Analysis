@@ -26,7 +26,7 @@ def addMail(dic, emailDir):
             # value = dic.get(email['from'])
             # value.append(readMail(email))
             # dic.update({key: value})
-            dic[email['from']].append(readMail(email))
+            dic[key].append(readMail(email))
         else:
             dic[key] =  [readMail(email)]
             # value = [readMail(email)]

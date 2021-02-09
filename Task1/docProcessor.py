@@ -1,5 +1,4 @@
 # from parser import myDict
-from multiprocessing import Pool
 import json,os,math
 from tqdm import tqdm
 import nltk
@@ -20,7 +19,7 @@ def _loadFromFile(path):
         return json.load(f)
 
 def getStats(mailboxes):
-    emailCount = count = tosCount = uniqueAdd = 0
+    emailCount = count = tosCount = 0
     addresses = set()
     for sender in tqdm(mailboxes):
         for email in mailboxes[sender]:
@@ -32,7 +31,7 @@ def getStats(mailboxes):
 
     print(f'There are {len(mailboxes.keys())} unique senders')
     print(f'There is also a total of {emailCount} emails')
-    print(f'There are {count} which have addressees, with a total of {tosCount} addressees, {len(addresses)} of which are unique')
+    print(f'There are emails {count} which have addressees, with a total of {tosCount} addressees, {len(addresses)} of which are unique')
 
     addresses.update(mailboxes.keys())
     print(f'Thus there are {len(addresses)} unique addressees')
@@ -71,11 +70,11 @@ def preProcess(doc):
 
     stopWords = set(nltk.corpus.stopwords.words('english'))
 
-    symbols = "!\"#$%&()*+-–./:;“<=>?@[\]^_`,'{”|}~\n"
-    # symbols = "-.,:?\n"
+    # symbols = "!\"#$%&()*+-–./:;“<=>?@[\]^_`,'{”|}~\n"
+    # # symbols = "-.,:?\n"
 
-    for s in symbols:
-        doc = doc.replace(s, '')
+    # for s in symbols:
+    #     doc = doc.replace(s, '')
     
     tokens = nltk.tokenize.word_tokenize(doc)  # tokenization
     # tokens = [t.lower() for t in tokens]  # case folding ?
@@ -174,7 +173,7 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
-    for sender in tqdm(newMailboxes, desc='PreProcessing'):
+    for sender in tqdm(newMailboxes, desc='PreProcessing'):      
         for msg in newMailboxes[sender]:
             msg['text'] = preProcess(msg['text'])
 
@@ -249,7 +248,7 @@ def vectorizeUsers(data):
                 
 
 if __name__ == '__main__':
-    var = 'subset'
+    var = 'maildir'
     root = os.path.join('data', var)
 
     workDir = os.path.join('intermediary', var)

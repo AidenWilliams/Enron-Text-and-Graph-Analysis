@@ -1,1 +1,41 @@
 #build graphable data by using the data given in previous step
+import os,json,math
+from tqdm import tqdm
+from docProcessor import getStats
+
+def _loadFromFile(path):
+    print('loading from file')
+    with open(path) as f:
+        return json.load(f)
+
+
+def topUserTerms(uVec,n):
+    topTerms = {}
+    for user,vec in tqdm(uVec.items(),desc='Top User Terms'):
+        topTerms[user]= {}
+        sortedTerms = {k: v for k, v in sorted(vec.items(), key=lambda item: item[1])}
+        # totalTerms = sum(vec.values())
+        # cutoff = n/100*totalTerms
+        # topN = [key for key in vec if vec[key] >= cutoff]
+        # topTerms[user] = {key: vec[key] for key in topN}
+
+        cutoff = math.ceil(n/100*len(vec))
+        # print(cutoff)
+        for key,value in list(sortedTerms.items())[:cutoff]:
+            topTerms[user][key] = value
+    return topTerms
+        
+
+if __name__ == '__main__':
+    
+    var = 'subset'
+    workDir = os.path.join('intermediary', var)
+    path = os.path.join(workDir, 'vectorizedUsers.json')
+
+    vectorUsers = _loadFromFile(path)
+    topTerms = topUserTerms(vectorUsers,10)
+
+    someNames = list(vectorUsers.keys())[:10]
+    # someName = someNames[:5]
+    for someName in someNames:
+        print(topTerms[someName])

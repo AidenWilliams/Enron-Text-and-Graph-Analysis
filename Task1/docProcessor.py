@@ -117,11 +117,14 @@ def preProcess(doc):
 
     stopWords = set(nltk.corpus.stopwords.words('english'))
 
-    # symbols = "!\"#$%&()*+-–./:;“<=>?@[\]^_`,'{”|}~\n"
-    # # symbols = "-.,:?\n"
+    symbols = "!\"#$%&()*+-–./:;“<=>?@[\]^_`,'{”|}~\n"
+    # # symbols = "-.,:?\n!"
 
-    # for s in symbols:
-    #     doc = doc.replace(s, '')
+    for s in symbols:
+        doc = doc.replace(s, '')
+
+    # table = doc.maketrans("","",symbols)
+    # doc.translate(table)
     
     tokens = nltk.tokenize.word_tokenize(doc)  # tokenization
     # tokens = [t.lower() for t in tokens]  # case folding ?
@@ -220,7 +223,8 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
-    for sender in tqdm(newMailboxes, desc='PreProcessing'):      
+    for sender in tqdm(newMailboxes, desc=f'         PreProcessing'):
+        print('\r'+sender[:8]+'|'+str(len(newMailboxes[sender])), end='')
         for msg in newMailboxes[sender]:
             msg['text'] = preProcess(msg['text'])
 
@@ -306,6 +310,11 @@ if __name__ == '__main__':
     getStats(mb)
 
     mb = loadIfCan(preProcessAll, os.path.join(workDir, 'preProcessed.json'), arg=mb)
+    # print(len(list(mb)[3363]))
+    print(list(mb)[3364])
+    # print(len(list(mb)[3365]))
+    # print(len(list(mb)[3366]))
+
     links = loadIfCan(getAllLinks, os.path.join(workDir, 'links.json'), arg=mb)
     docs = getALLDocs(mb)
     # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)

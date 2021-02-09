@@ -1,0 +1,37 @@
+{% extends "navbar.html" %}
+{% block content %}
+<div id="observablehq-0e773294">
+    <div class="observablehq-chart"></div>
+    <div class="observablehq-viewof-source"></div>
+    <div class="observablehq-source"></div>
+    <div class="observablehq-fontFamily"></div>
+    <div class="observablehq-fontScale"></div>
+    <div class="observablehq-rotate"></div>
+    <div class="observablehq-padding"></div>
+    <div class="observablehq-height"></div>
+    <div class="observablehq-words"></div>
+    <div class="observablehq-data"></div>
+    <div class="observablehq-stopwords"></div>
+    <div class="observablehq-d3"></div>
+</div>
+<script type="module">
+    import { Runtime, Inspector } from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+    // import define from "https://api.observablehq.com/@d3/word-cloud.js?v=3";
+    import define from ".{{ url_for('static', filename = 'cloud.mjs') }}";
+    (new Runtime).module(define, name => {
+        if (name === "chart") return Inspector.into("#observablehq-0e773294 .observablehq-chart")();
+        // if (name === "viewof source") return Inspector.into("#observablehq-0e773294 .observablehq-viewof-source")();
+        // if (name === "source") return Inspector.into("#observablehq-0e773294 .observablehq-source")();
+        // if (name === "fontFamily") return Inspector.into("#observablehq-0e773294 .observablehq-fontFamily")();
+        // if (name === "fontScale") return Inspector.into("#observablehq-0e773294 .observablehq-fontScale")();
+        // if (name === "rotate") return Inspector.into("#observablehq-0e773294 .observablehq-rotate")();
+        // if (name === "padding") return Inspector.into("#observablehq-0e773294 .observablehq-padding")();
+        // if (name === "height") return Inspector.into("#observablehq-0e773294 .observablehq-height")();
+        // if (name === "words") return Inspector.into("#observablehq-0e773294 .observablehq-words")();
+        // if (name === "data") return Inspector.into("#observablehq-0e773294 .observablehq-data")();
+        // if (name === "stopwords") return Inspector.into("#observablehq-0e773294 .observablehq-stopwords")();
+        // if (name === "d3") return Inspector.into("#observablehq-0e773294 .observablehq-d3")();
+    });
+</script>
+
+{% endblock %}

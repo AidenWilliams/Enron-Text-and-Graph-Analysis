@@ -23,12 +23,14 @@ def addMail(dic, emailDir):
         email = Parser().parsestr(f.read())
         key = email['from']
         if key in dic:
-            value = dic.get(email['from'])
-            value.append(readMail(email))
-            dic.update({key: value})
+            # value = dic.get(email['from'])
+            # value.append(readMail(email))
+            # dic.update({key: value})
+            dic[email['from']].append(readMail(email))
         else:
-            value = [readMail(email)]
-            dic.update({key: value})
+            dic[key] =  [readMail(email)]
+            # value = [readMail(email)]
+            # dic.update({key: value})
 
 
 def addAll(dic, emailDir):

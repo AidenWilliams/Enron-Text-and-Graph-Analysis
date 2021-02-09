@@ -57,7 +57,7 @@ def buildClusters(userDocs, k):
     sims = {}
 
     while(s!=1): #no change in clusters
-        for user,doc in userDocs.items():
+        for user, doc in userDocs.items():
             sims[user].append( sim(currCentroids,doc))
             k = max(sims[user])
 

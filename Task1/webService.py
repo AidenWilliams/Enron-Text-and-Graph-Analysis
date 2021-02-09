@@ -60,7 +60,7 @@ def formatLinks(lnks,nodes):
     added = set()
     nodes = set(nodes)
 
-    for user,conn in tqdm(lnks.items(),desc='Formatting Links'):
+    for user, conn in tqdm(lnks.items(), desc='Formatting Links'):
         for rec in conn:
             if user == rec  or (user, rec) in added or (rec,user) in added:
                 continue

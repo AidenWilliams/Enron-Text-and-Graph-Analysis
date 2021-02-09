@@ -42,7 +42,7 @@ def getStats(mailboxes):
 
 def getAllAddresses(mailboxes):
     addresses = set()
-    for sender,emails in mailboxes.items():
+    for sender, emails in mailboxes.items():
         for email in emails:
             if email['tos']:
                 addresses.update(email['tos'])
@@ -73,7 +73,7 @@ def getParticularLink(mbxs,user):
                     links[user][to] += 1
                 else:
                     links[user][to] = 1
-    for sender,msgs in mbxs.items():
+    for sender, msgs in mbxs.items():
         for msg in msgs:
             if user in msg['tos']:
                 if sender in links[user]:
@@ -85,7 +85,7 @@ def getParticularLink(mbxs,user):
 
 def getAllLinks(mbxs):
     links = {}
-    for user,msgs in tqdm(mbxs.items(),desc='Generating User Links'):
+    for user, msgs in tqdm(mbxs.items(), desc='Generating User Links'):
         if user not in links:
             links[user]= {}
         if user in mbxs:
@@ -139,7 +139,7 @@ def preProcess(doc):
 
 def _weights(docs):
     wordWeights = {}
-    for key,doc in tqdm(docs.items(),desc='Getting Weights'):
+    for key, doc in tqdm(docs.items(), desc='Getting Weights'):
         if not doc:
             continue
         # wordWeight = dict.fromkeys(uniqueWords, 0)
@@ -208,7 +208,7 @@ def vectorizeDocs(docs):
 
     idf = _IDF(weights)
 
-    for key,tf in tqdm(tfs.items(),desc='TFIDF'):
+    for key, tf in tqdm(tfs.items(), desc='TFIDF'):
         tfidfs[key] = (_TFIDF(tf, idf))
     print('done vectorizing')
     return tfidfs
@@ -223,12 +223,8 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
-    for sender in tqdm(newMailboxes, desc=f'               pp'):
-        print('\r   '+sender[:8]+'|'+str(len(newMailboxes[sender])), end='')
-        x = 0;
+    for sender in tqdm(newMailboxes, desc=f'PreProcessing:'):
         for msg in newMailboxes[sender]:
-            x+=1
-            print(f'\r{x}', end='')
             msg['text'] = preProcess(msg['text'])
         del mailboxes[sender]
 

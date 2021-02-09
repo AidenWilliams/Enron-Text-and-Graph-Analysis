@@ -75,8 +75,9 @@ def formatLinks(lnks,nodes):
 
             added.add((user, rec))
 
-            x = lnks[user][rec]
-            value = 30*1/(1/(1 + np.exp(-x)))
+            # x = lnks[user][rec]
+            value = min(20,lnks[user][rec])
+            # value = 30*1/(1/(1 + np.exp(-x)))
             fmtd.append({
                 'source': source,
                 'target': nrec,

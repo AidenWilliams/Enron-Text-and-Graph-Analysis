@@ -42,7 +42,7 @@ def getStats(mailboxes):
 
 def getAllAddresses(mailboxes):
     addresses = set()
-    for sender, emails in mailboxes.items():
+    for emails in mailboxes.values():
         for email in emails:
             if email['tos']:
                 addresses.update(email['tos'])
@@ -189,7 +189,7 @@ def _TFIDF(TF, IDF):
     TFIDF = {}
 
     for word, weight in TF.items():
-        if word not in IDF.keys():
+        if word not in IDF:
             print(f"term '{word}'' not found in idf, returnig zero")
             TFIDF[word] = 0
         else:
@@ -199,18 +199,23 @@ def _TFIDF(TF, IDF):
 def vectorizeDocs(docs):
     print('vectorizing')
     tfidfs = {}
-    tfs = {}
+    # tfs = {}
 
     weights = _weights(docs)
 
-    for key,w in tqdm(weights.items(),desc='TF'):
-        tfs[key] = (_TF(w))
-
     idf = _IDF(weights)
 
-    for key, tf in tqdm(tfs.items(), desc='TFIDF'):
-        tfidfs[key] = (_TFIDF(tf, idf))
+    # for key,w in tqdm(weights.items(),desc='TF'):
+    #     tfs[key] = (_TF(w))    
+
+    # for key, tf in tqdm(tfs.items(), desc='TFIDF'):
+    #     tfidfs[key] = (_TFIDF(tf, idf))
+    for key, w in tqdm(weights.items(), desc='TFIDF'):
+        tfidfs[key] = _TFIDF(_TF(w), idf)
+        # if(w=='ecn-2831'):
+        #     print(w)
     print('done vectorizing')
+    # print()
     return tfidfs
 
 
@@ -271,27 +276,45 @@ def vectorizeUsers(data):
     vDocs = data['vd']
     mb = data['mb']
     vUsers = {}
-    
+
+
+    vCounts = {}
+    vTotals = {}
+    for users, doc in tqdm(vDocs.items(),desc='Weighting Users:'):
+        A = users[0]
+        B = users[1]
+        if users not in vCounts:
+            vCounts[A] = {}
+            vTotals[A] = {}
+            vCounts[B] = {}
+            vTotals[B] = {}
+
+       
+        for word, value in doc.items():
+            if word in vCounts[A]:
+                vCounts[A][word] += 1
+                vTotals[A][word] += value
+            else:
+                vCounts[A][word] = 1
+                vTotals[A][word] = value
+
+            if word in vCounts[B]:
+                vCounts[B][word] += 1
+                vTotals[B][word] += value
+            else:
+                vCounts[B][word] = 1
+                vTotals[B][word] = value
+    skipCount = 0;
     for user in tqdm(getAllAddresses(mb),desc='Vectorizing Users'):
-        relevantVecs = []
-        vCounts = {}
-        vTotals = {}
-        for users in vDocs:
-            if user in users:
-                relevantVecs.append(vDocs[users])
-        for vec in relevantVecs:
-            for word, value in vec.items():
-                if word in vCounts:
-                    vCounts[word] += 1
-                    vTotals[word] += value
-                else:
-                    vCounts[word]=1
-                    vTotals[word] = value
-        for key in vCounts:
+        if user not in vCounts:
+            skipCount +=1
+            continue
+
+        for key in vCounts[user]:
             if user not in vUsers:
                 vUsers[user] = {}
-            vUsers[user][key] = vTotals[key]/vCounts[key]
-                
+            vUsers[user][key] = vTotals[user][key]/vCounts[user][key]
+    print(skipCount,'users were skipped')
     return vUsers
 
 
@@ -308,18 +331,15 @@ if __name__ == '__main__':
         mb = json.load(f)
 
     getStats(mb)
-
     mb = loadIfCan(preProcessAll, os.path.join(workDir, 'preProcessed.json'), arg=mb)
-    # print(len(list(mb)[3363]))
-    print(list(mb)[3364])
-    # print(len(list(mb)[3365]))
-    # print(len(list(mb)[3366]))
 
     links = loadIfCan(getAllLinks, os.path.join(workDir, 'links.json'), arg=mb)
     docs = getALLDocs(mb)
     # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
     vectorDocs = vectorizeDocs(docs)
     vectorUsers = loadIfCan(vectorizeUsers, os.path.join(workDir, 'vectorizedUsers.json'), arg={'mb':mb, 'vd':vectorDocs})
+    print('done')
+    # vectorUsers = vectorizeUsers({'mb':mb, 'vd':vectorDocs})
 
 
 

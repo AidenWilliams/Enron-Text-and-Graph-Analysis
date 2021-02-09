@@ -75,7 +75,7 @@ def closestCentr(prev,docs):
     return distances
 
 
-def calcCentroid(points,clust):
+def calcCentroids(points,clust):
     # cntrds = {}
     cnt = {}
     # for c in clust:
@@ -89,10 +89,11 @@ def calcCentroid(points,clust):
             cnt[c] = {}
         for point, cluster in points.items():
             if point not in cnt[c]:
-                cnt[c][point] = {'sor': 0, 'dee': 0}
+                cnt[c][point] = {'sor': 0, 'denom': 0}
+
             cnt[c][point]['sor']  +=(cluster == c)*point
-            cnt[c][point]['dee'] += (cluster == c)
-        cnt[c] = sum([cnt[c][point]['sor'] for point in cnt[c]]/sum([cnt[c][point]['dee'] for point in cnt[c]])
+            cnt[c][point]['denom'] += (cluster == c)
+        cnt[c] = sum([cnt[c][point]['sor'] for point in cnt[c]])/sum([cnt[c][point]['denom'] for point in cnt[c]])
     return cnt
     
 
@@ -107,15 +108,17 @@ def buildClusters(userDocs, k):
         initClusters.append(userDocs[x])
     currClust = initClusters
     prevClust = []
-    s = sim(prevClust,currClust)
+    s = sim(currClust, currClust)
 
-    closest = closestCentr(prevClust, userDocs)
+    closest = closestCentr(currClust, userDocs)
     while(s!=1):
         
+        s = sim(prevClust, currClust)        
 
-        s = sim(prevClust, currClust)
-        closest = closestCentr(prevClust, userDocs)
+        prevClust = currClust
+        currClust = calcCentroids(closest,currClust)
+        closest = closestCentr(currClust, userDocs)
 
-def filterDocs(userDocs):
+def filterDocs(userDocs): #here we will minimise the amount of nodes to calm things down for the clustering!
     #return userDocs
     pass

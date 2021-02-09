@@ -40,7 +40,12 @@ This network of character co-occurence in _Les Misérables_ is positioned by sim
             .join("circle")
             .attr("r", 5)
             .attr("fill", color)
-            .call(drag(simulation));
+            .call(drag(simulation))
+            .on('click', function (d, i) {
+                // console.log(d)
+                // console.log(i)
+                window.location.href = "/cloud?code="+i.index;
+            });
 
         node.append("title")
             .text(d => d.id);

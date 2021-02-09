@@ -33,7 +33,10 @@ def userCloudData():
 
 @app.route('/cloud', methods=['GET'])
 def ug():
-    return render_template('cloud.html', user='heather.dunton')
+    code = int(request.args.get('code'))
+    user = userGraph['nodes'][code]['id']
+
+    return render_template('cloud.html', user=user)
 
 @app.route('/users', methods=['GET'])
 def userForce():
@@ -48,7 +51,7 @@ def clusters():
 def topCount():
     global topCount
     global userGraph
-    print(request.args)
+    # print(request.args)
     topCount = int(request.args.get('count'))
     userGraph = getUserGraph(vectorUsers)
     return redirect(url_for('userForce'))
@@ -107,7 +110,7 @@ def getUserGraph(vectorUsers):
     # rawNodes = gdb.getNodes(vectorUsers)
 
     topNodes = topUsers(rawLinks)
-    print(f'topusers: {topNodes}')
+    # print(f'topusers: {topNodes}')
     links = formatLinks(rawLinks, topNodes)
 
     # nodes = {'nodes': [{'id': name} for name in rawNodes]}
@@ -130,5 +133,5 @@ if __name__ == '__main__':
     userGraph = getUserGraph(vectorUsers)
     
 
-    topTerms = gdb.topUserTerms(vectorUsers, 10)
-    app.run()
+    topTerms = gdb.topUserTerms(vectorUsers, 20)
+    app.run(host='0.0.0.0',port=6969)

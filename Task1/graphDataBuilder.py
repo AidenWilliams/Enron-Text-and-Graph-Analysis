@@ -19,7 +19,7 @@ def topUserTerms(uVec,n):
         cutoff = math.ceil(n/100*len(vec))
         # print(cutoff)
         for key, value in list(reversed(list(sortedTerms.items())))[:cutoff]:
-            topTerms[user][key] = value*10
+            topTerms[user][key] = value*5
     return topTerms
 
 def getNodes(vUsers):

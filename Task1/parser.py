@@ -3,9 +3,6 @@ from email.parser import Parser
 from tqdm import tqdm
 import json
 
-rootDir = os.path.join('data', 'maildir')
-myDict = {}
-
 
 def readMail(email):
     update = {'subject': email['subject'],
@@ -41,7 +38,8 @@ def addAll(dic, emailDir):
         addMail(dic, emailDir)
 
 
-def loadData(dic, root):
+def loadData(root):
+    dic = {}
     for user in tqdm(os.listdir(root)):
         userPath = os.path.join(root, user)
         for folder in os.listdir(userPath):
@@ -52,6 +50,7 @@ def loadData(dic, root):
 
             for file in os.listdir(folderPath):
                 addAll(dic, os.path.join(rootDir, user, folder, file))
+    return dic
 
 
 def _saveToFile(data, path):
@@ -60,16 +59,25 @@ def _saveToFile(data, path):
         json.dump(data, fp, indent=4)
 
 
+def getMB(path,root):
+    if os.path.isfile(path) and os.access(path, os.R_OK):
+        print("Mailboxes file found!")
+        print('Reading...')
+        with open(path, 'r') as f:
+            myDict = json.load(f)
 
-path = os.path.join('intermediary', 'mailboxes.json')
+    else:
+        print("Either file is missing or is not readable, creating file...")
+        myDict = loadData(root)
+        _saveToFile(myDict, path)
 
-if os.path.isfile(path) and os.access(path, os.R_OK):
-    print("Mailboxes file found!")
-    print('Reading...')
-    with open(path, 'r') as f:
-        myDict = json.load(f)
+    return myDict
 
-else:
-    print("Either file is missing or is not readable, creating file...")
-    loadData(myDict, rootDir)
-    _saveToFile(myDict, path)
+if __name__ == '__main__':
+    var = 'subset'
+    rootDir = os.path.join('data', var)
+    path = os.path.join('intermediary', var, 'mb.json')
+
+    myDict = getMB(path,rootDir)
+
+    

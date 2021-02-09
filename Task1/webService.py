@@ -1,4 +1,5 @@
 import flask,os
+from tqdm import tqdm
 from flask import render_template,jsonify,request
 from flask import json
 import graphDataBuilder as gdb
@@ -15,10 +16,10 @@ def homee():
 
 @app.route('/userGraphData', methods=['GET'])
 def usGraphDa():
-    data = []
-    with open('Task1/static/miser.json','r') as f:
-        data = json.load(f)
-    return data
+    # data = []
+    # with open('Task1/static/miser.json','r') as f:
+    #     data = json.load(f)
+    return jsonify(userGraph)
 
 @app.route('/userCloudData', methods=['GET'])
 def userCloudData():
@@ -61,14 +62,57 @@ def test():
     return jsonify(topTerms)
 
 
+def formatLinks(lnks,nodes):
+    # fmtd = dict.fromkeys(lnks.keys())
+    fmtd = []
+    added = set()
+    nodes = set(nodes)
 
+    for user,conn in tqdm(lnks.items(),desc='Formatting Links'):
+        for rec in conn:
+            if user == rec  or (user, rec) in added or (rec,user) in added:
+                continue
+
+
+            
+            source = user.split('@')[0] if '@' in user else user
+            nrec = rec.split('@')[0] if '@' in rec else rec
+
+            if source not in nodes or nrec not in nodes:
+                continue
+
+            added.add((user, rec))
+
+            fmtd.append({
+                'source': source,
+                'target': nrec,
+                'value': lnks[user][rec]
+                })
+
+    return {"links":fmtd}
 
 if __name__ == '__main__':
 
-    var = 'subset'
+    var = 'maildir'
     workDir = os.path.join('intermediary', var)
     path = os.path.join(workDir, 'vectorizedUsers.json')
 
+    
+
     vectorUsers = gdb._loadFromFile(path)
+
+    path = os.path.join(workDir, 'links.json')
+    rawLinks = gdb._loadFromFile(path)
+
+    rawNodes = gdb.getNodes(vectorUsers)
+    links = formatLinks(rawLinks, rawNodes)
+
+    nodes = {'nodes': [{'id': name} for name in rawNodes]}
+    
+
+    userGraph ={}
+    userGraph.update(links)
+    userGraph.update(nodes)
+
     topTerms = gdb.topUserTerms(vectorUsers, 10)
     app.run()

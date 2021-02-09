@@ -85,27 +85,26 @@ def getParticularLink(mbxs,user):
 
 def getAllLinks(mbxs):
     links = {}
-    for user,msgs in mbxs.items():
+    for user,msgs in tqdm(mbxs.items(),desc='Generating User Links'):
         if user not in links:
             links[user]= {}
         if user in mbxs:
             for msg in msgs:
-                for to in msg['tos']:                    
+                for to in msg['tos']:        
+                                
                     if to in links[user]:
                         links[user][to] += 1
                     else:
                         links[user][to] = 1
+
+                    if to not in links:
+                        links[to] = {}
                 
                     if user in links[to]:
                         links[to][user] += 1
                     else:
                         links[to][user] = 1
-            # for recip in msg['tos']:
-                
-        # for msg in msgs:
-            
-
-    # for sender,msgs in mbxs.items():
+    return links
         
                 
 

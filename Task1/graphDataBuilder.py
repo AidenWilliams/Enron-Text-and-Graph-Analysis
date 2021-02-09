@@ -14,10 +14,6 @@ def topUserTerms(uVec,n):
     for user,vec in tqdm(uVec.items(),desc='Top User Terms'):
         topTerms[user]= {}
         sortedTerms = {k: v for k, v in sorted(vec.items(), key=lambda item: item[1])}
-        # totalTerms = sum(vec.values())
-        # cutoff = n/100*totalTerms
-        # topN = [key for key in vec if vec[key] >= cutoff]
-        # topTerms[user] = {key: vec[key] for key in topN}
 
         cutoff = math.ceil(n/100*len(vec))
         # print(cutoff)
@@ -26,7 +22,7 @@ def topUserTerms(uVec,n):
     return topTerms
 
 def getNodes(vUsers):
-    return [user.split('@')[1] for user in vUsers.keys()]
+    return [user.split('@')[0] for user in vUsers.keys()]
 
 
 

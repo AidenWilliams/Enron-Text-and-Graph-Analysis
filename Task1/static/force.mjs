@@ -76,7 +76,7 @@ This network of character co-occurence in _Les Misérables_ is positioned by sim
     });
     main.variable(observer("height")).define("height", function () {
         return (
-            1000
+            800
         )
     });
     main.variable(observer("color")).define("color", ["d3"], function (d3) {

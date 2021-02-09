@@ -1,6 +1,22 @@
 {% extends "navbar.html" %}
 {% block content %}
 
+
+<form action='/topCount'  method='GET'>
+    <div class="row g-3 align-items-center">
+        <div class="col-auto">
+            <label for="count" class="col-form-label">Top Users Count</label>
+        </div>
+        <div class="col-auto">
+            <input type="number" id="count" class="form-control" name="count">
+        </div>
+        <!-- <div class="col-auto"><button type="submit" class="btn btn-default">Submit</button></div> -->
+        <div class="col-auto"><p>Current: {{tcount}}</p></div>
+
+    </div>
+</form>
+
+
 <div id="observablehq-07371626">
     <div class="observablehq-chart"></div>
     <div class="observablehq-data"></div>

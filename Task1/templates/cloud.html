@@ -20,8 +20,8 @@
     import define from ".{{ url_for('static', filename = 'cloud.mjs') }}";
     (new Runtime).module(define, name => {
         if (name === "chart") return Inspector.into("#observablehq-0e773294 .observablehq-chart")();
-        // if (name === "viewof source") return Inspector.into("#observablehq-0e773294 .observablehq-viewof-source")();
-        // if (name === "source") return Inspector.into("#observablehq-0e773294 .observablehq-source")();
+        if (name === "viewof source") return Inspector.into("#observablehq-0e773294 .observablehq-viewof-source")();
+        if (name === "source") return Inspector.into("#observablehq-0e773294 .observablehq-source")();
         // if (name === "fontFamily") return Inspector.into("#observablehq-0e773294 .observablehq-fontFamily")();
         // if (name === "fontScale") return Inspector.into("#observablehq-0e773294 .observablehq-fontScale")();
         // if (name === "rotate") return Inspector.into("#observablehq-0e773294 .observablehq-rotate")();

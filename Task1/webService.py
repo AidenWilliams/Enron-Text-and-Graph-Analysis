@@ -1,5 +1,6 @@
 import flask,os
 from flask import render_template,jsonify,request
+from flask import json
 import graphDataBuilder as gdb
 import mimetypes
 mimetypes.add_type('application/javascript', '.mjs')
@@ -8,16 +9,28 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 @app.route('/', methods=['GET'])
-def home():
+def homee():
     return render_template('index.html', name='john')
 
+
+@app.route('/userGraphData', methods=['GET'])
+def usGraphDa():
+    data = []
+    with open('Task1/static/miser.json','r') as f:
+        data = json.load(f)
+    return data
 
 @app.route('/userCloudData', methods=['GET'])
 def userCloudData():
     # value = [{ 'word': "Running", 'size': "69" }, { 'word': "Surfing", 'size': "20" }, { 'word': "Climbing", 'size': "50" }, { 'word': "Kiting", 'size': "30" },{ 'word': "Sailing", 'size': "20" }, { 'word': "Snowboarding", 'size': "60" }]
     user = request.args.get('user')
-    value = topTerms.get(user)
-    return jsonify(value)
+    userTerms = topTerms.get(user)
+    # print('returning',value)
+
+    wordList = []
+    for key, value in userTerms.items():
+        wordList.append({'word':key,'size':value})
+    return jsonify(wordList)
 
 
 @app.route('/allusers', methods=['GET'])
@@ -41,7 +54,11 @@ def clusters():
 
 @app.route('/test', methods=['GET'])
 def test():
-    return " man hi how are you hello hello hello hello hello hello okay bro"
+    file = {
+        'one': " man hi how are you hello hello hello hello hello hello okay bro",
+        'two': "hey homie was poppin!"
+    }
+    return jsonify(topTerms)
 
 
 

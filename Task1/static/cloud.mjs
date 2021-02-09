@@ -40,11 +40,19 @@ A demonstration of [d3-cloud](https://github.com/jasondavies/d3-cloud/). Paste i
     );
     main.variable(observer("viewof source")).define("viewof source", ["html", "FileAttachment"], async function (html, FileAttachment) {
         const textarea = html`<textarea rows=10>`;
-        // textarea.value = (await FileAttachment("dream.txt").text()).trim();
-        const data = await d3.text("/test",(data) => {return data;})
-        console.log('data:')
-        console.log(data)
-        textarea.value = data
+        // textarea.value = (await FileAttachment("dream.txt").json()['one']).trim();
+        const values = (await FileAttachment("dream.txt").json())
+        console.log(values)
+        console.log(values['one'])
+        textarea.value = values['two']
+        // const data = await d3.text("/test",(data) => {return data;})
+        // console.log('data:')
+        // console.log(data)
+        // textarea.value = data
+        // d3.text("/path/to/file.txt").then(function (text) {
+        //     console.log(text); // Hello, world!
+        // });
+
         
 
         textarea.style = `

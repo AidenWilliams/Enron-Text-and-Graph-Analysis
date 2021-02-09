@@ -62,6 +62,54 @@ def getDoc(mailboxes,A,B):
                 AB += email['text']
     return AB
 
+def getParticularLink(mbxs,user):
+    links = {}
+    if user not in links:
+        links[user] = {}
+    if user in mbxs:
+        for message in mbxs[user]:
+            for to in message['tos']:
+                if to in links[user]:
+                    links[user][to] += 1
+                else:
+                    links[user][to] = 1
+    for sender,msgs in mbxs.items():
+        for msg in msgs:
+            if user in msg['tos']:
+                if sender in links[user]:
+                    links[user][sender]+=1
+                else:
+                    links[user][sender]=1
+    return links
+
+
+def getAllLinks(mbxs):
+    links = {}
+    for user,msgs in mbxs.items():
+        if user not in links:
+            links[user]= {}
+        if user in mbxs:
+            for msg in msgs:
+                for to in msg['tos']:                    
+                    if to in links[user]:
+                        links[user][to] += 1
+                    else:
+                        links[user][to] = 1
+                
+                    if user in links[to]:
+                        links[to][user] += 1
+                    else:
+                        links[to][user] = 1
+            # for recip in msg['tos']:
+                
+        # for msg in msgs:
+            
+
+    # for sender,msgs in mbxs.items():
+        
+                
+
+
 
 def preProcess(doc):
     # print('starting pre')
@@ -259,6 +307,7 @@ if __name__ == '__main__':
     getStats(mb)
 
     mb = loadIfCan(preProcessAll, os.path.join(workDir, 'preProcessed.json'), arg=mb)
+    links = loadIfCan(getAllLinks, os.path.join(workDir, 'links.json'), arg=mb)
     docs = getALLDocs(mb)
     # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
     vectorDocs = vectorizeDocs(docs)

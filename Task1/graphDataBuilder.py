@@ -21,10 +21,14 @@ def topUserTerms(uVec,n):
 
         cutoff = math.ceil(n/100*len(vec))
         # print(cutoff)
-        for key,value in list(sortedTerms.items())[:cutoff]:
-            topTerms[user][key] = value
+        for key,value in list(reversed(list(sortedTerms.items())))[:cutoff]:
+            topTerms[user][key] = value*10
     return topTerms
-        
+
+def getNodes(vUsers):
+    return [user.split('@')[1] for user in vUsers.keys()]
+
+
 
 if __name__ == '__main__':
     

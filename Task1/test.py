@@ -2,26 +2,46 @@
 import json,pickle
 from datetime import datetime
 
-startN = datetime.now()
-with open('intermediary/maildir/mb.json','r') as f:
-    data = json.load(f)
-endN = datetime.now()-startN
+prepic = {}
+with open('intermediary/maildir/prePickle/NMpreProcessed.json', 'r') as handle:
+    prepic = json.load(handle)
 
-startS = datetime.now()
-with open('intermediary/maildir/mb.json','w') as f:
-    json.dump(data,f)
-endS = datetime.now()-startN
+pic = {}
+with open('intermediary/maildir/preProcessed.pkl', 'rb') as handle:
+    pic = pickle.load(handle)
+print('matchin')
+for pre in prepic:
+    if prepic[pre] != pic[pre]:
+        print('\ndiff!')
+        for pr,p in zip(prepic[pre],pic[pre]):
+            if pr != p:
+                for msgField in pr:
+                    if pr[msgField] != p[msgField]:
+                        if set(pr[msgField]) != set(p[msgField]):
+                            print('\n\nold: ', pr[msgField])
+                            print('new: ', p[msgField])
+        break
+print('done')
+# startN = datetime.now()
+# with open('intermediary/maildir/mb.json','r') as f:
+#     data = json.load(f)
+# endN = datetime.now()-startN
 
-startSP = datetime.now()
-with open('intermediary/maildir/mb.pkl', 'wb') as handle:
-    pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
-endSP = datetime.now()-startSP
+# startS = datetime.now()
+# with open('intermediary/maildir/mb.json','w') as f:
+#     json.dump(data,f)
+# endS = datetime.now()-startN
+
+# startSP = datetime.now()
+# with open('intermediary/maildir/mb.pkl', 'wb') as handle:
+#     pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# endSP = datetime.now()-startSP
 
 
-startRP = datetime.now()
-with open('intermediary/maildir/mb.pkl', 'rb') as handle:
-    data = pickle.load(handle)
-endRP = datetime.now()-startRP
+# startRP = datetime.now()
+# with open('intermediary/maildir/mb.pkl', 'rb') as handle:
+#     data = pickle.load(handle)
+# endRP = datetime.now()-startRP
 # df = pd.DataFrame.from_dict(data)
 # df.to_pickle("intermediary/maildir/mbPD.pkl")
 
@@ -38,11 +58,11 @@ endRP = datetime.now()-startRP
 # unJS = pd.read_json("intermediary/maildir/mbD.json")
 # endD = time.now()-startP
 
-print('norm read:',endN)
-print('norm save:',endS)
-# print('df:',endD)
-print('pkl save:',endSP)
-print('pkl read:',endRP)
+# print('norm read:',endN)
+# print('norm save:',endS)
+# # print('df:',endD)
+# print('pkl save:',endSP)
+# print('pkl read:',endRP)
 
 
 

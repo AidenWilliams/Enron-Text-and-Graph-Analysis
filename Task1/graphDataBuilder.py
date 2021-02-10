@@ -1,12 +1,6 @@
-#build graphable data by using the data given in previous step
-import os,json,math
+import math
 from tqdm import tqdm
-# import dependancyManager as dm
 
-# def _loadFromFile(path):
-#     print('loading from file')
-#     with open(path) as f:
-#         return json.load(f)
 
 
 def topUserTerms(vUsers, n):
@@ -21,6 +15,7 @@ def topUserTerms(vUsers, n):
         for key, value in list(reversed(list(sortedTerms.items())))[:cutoff]:
             topTerms[user][key] = value
     return topTerms
+
 
 def getNodes(vUsers):
     return [user.split('@')[0] for user in vUsers.keys()]

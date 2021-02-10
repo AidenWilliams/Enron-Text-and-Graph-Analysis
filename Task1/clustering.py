@@ -31,7 +31,7 @@ def sim(A, B):
 
 class point:
     parentCluster = None
-    data = []  # data vec
+    data = {}  # data vec
 
     def __init__(self,dt):
         self.parentCluster = None
@@ -47,25 +47,32 @@ class point:
             sims[c] = self.similarityTo(c)
         topClust = dict(sorted(sims.items(), key=lambda item: item[1],reverse=True)).keys()[0]
         self.parentCluster = topClust
-
+        self.parentCluster.points.append(self)
 
 
 class Cluster:
-    centroid = []  # data vec
+    centroid = {}  # data vec
     points = []
 
     def __init__(self, cntrd):
         self.centroid = cntrd 
 
     def reCalc(self):
-        sims = {}
+        # sim = {}
+        totals = {}
+        docCount = len(self.points)
         for p in self.points:
-            sim[p] = p.similarityTo(self)
+            for word,weight in p.data:
+                if word not in totals:
+                    totals[word] = 0
+                totals[word]+=weight
+            # sim[p] = p.similarityTo(self)
 
-        total = sum(sim.values())
-        lng = len(sim)
-        mean = total/lng
-        self.centroid = mean
+        # total = sum(sim.values())
+        # lng = len(sim)
+        # mean = total/lng
+        for t,v in totals.items():
+            self.centroid[t] = v/docCount
 
 
 class clusterSet:
@@ -73,74 +80,123 @@ class clusterSet:
     def __init__(self,clusters):
         self.clusters = clusters
     
-    def reCalcAll(self):
+    def reCalculateCentroids(self):
         for c in self.clusters:
             c.reCalc()
 
+    # def distanceToOtherSet(self,other):   #IDK WHAT TO DO HERE
+    #     return sim()
 
+    # def distanceToVec(slef,vec):          #IDK WHAT TO DO HERE
+    #     return sim()
 
-
-
-
-def closestCentr(prev,docs):
-    distances = {}
-    for d in docs:
-        if d not in distances:
-            distances[d] = {}
-            for c in prev:
-                distances[d][c] = sim(d,c)
-        distances[d] = sorted(distances[d].values())[-1]
-    return distances
-
-
-def calcCentroids(points,clust):
-    # cntrds = {}
-    cnt = {}
-    # for c in clust:
-    #     if c not in dist:
-    #         dist[c] = {}
-    #     for p in points:
-    #         dist[c][p] = sim(c,p)
-        # dist[c] = sorted(dist[c].values())[-1]
-    for c in clust:
-        if c not in cnt:
-            cnt[c] = {}
-        for point, cluster in points.items():
-            if point not in cnt[c]:
-                cnt[c][point] = {'sor': 0, 'denom': 0}
-
-            cnt[c][point]['sor']  +=(cluster == c)*point
-            cnt[c][point]['denom'] += (cluster == c)
-        cnt[c] = sum([cnt[c][point]['sor'] for point in cnt[c]])/sum([cnt[c][point]['denom'] for point in cnt[c]])
-    return cnt
-    
+    def reAssignPoints(self):
+        allPts = []
+        for c in self.clusters:
+            allPts.extend(c.points)
+            c.points.clear()
+        for p in allPts:
+            p.assignClosest(self.clusters)
+            
 
 def buildClusters(userDocs, k):
     init = []
     lng = len(userDocs)
     if k > lng:
         ValueError("K larger than document count!")
-    while(len(init))< k:
-        ind = randint(0,lng-1)
+    while(len(init)) < k:
+        ind = randint(0, lng-1)
         if ind not in init:
             init.append(ind)
     initClusters = []
     for x in init:
-        initClusters.append(list(list(userDocs.values())[x].values()))
-    currClust = initClusters
+        points = list(list(userDocs.values())[x].values())
+        clst = Cluster(points)
+        initClusters.append(clst)
+
+    currClust = clusterSet(initClusters)
     prevClust = []
     s = sim(currClust, prevClust)
 
+    # closest = closestCentr(currClust, userDocs)
+    while True:
 
-    closest = closestCentr(currClust, userDocs)
-    while(s!=1):
         
-        s = sim(prevClust, currClust)        
-
-        closest = closestCentr(currClust, userDocs)
-
+        currClust.reAssignPoints()
         prevClust = currClust
-        currClust = calcCentroids(closest,currClust)
+        currClust.reCalculateCentroids()
+
+        s = sim(currClust.centroid,prevClust.centroid)
+        if s==1:
+            return currClust
+        # closest = closestCentr(currClust, userDocs)
+
+        # prevClust = currClust
+        # currClust = calcCentroids(closest, currClust)
+
+# def buildClusters(userDocs, k):
+#     init = []
+#     lng = len(userDocs)
+#     if k > lng:
+#         ValueError("K larger than document count!")
+#     while(len(init)) < k:
+#         ind = randint(0, lng-1)
+#         if ind not in init:
+#             init.append(ind)
+#     initClusters = []
+#     for x in init:
+#         initClusters.append(list(list(userDocs.values())[x].values()))
+#     currClust = initClusters
+#     prevClust = []
+#     s = sim(currClust, prevClust)
+
+#     closest = closestCentr(currClust, userDocs)
+#     while(s != 1):
+
+#         s = sim(prevClust, currClust)
+
+#         closest = closestCentr(currClust, userDocs)
+
+#         prevClust = currClust
+#         currClust = calcCentroids(closest, currClust)
+
+
+
+
+# def closestCentr(prev,docs):
+#     distances = {}
+#     for d in docs:
+#         if d not in distances:
+#             distances[d] = {}
+#             for c in prev:
+#                 distances[d][c] = sim(d,c)
+#         distances[d] = sorted(distances[d].values())[-1]
+#     return distances
+
+
+# def calcCentroids(points,clust):
+#     # cntrds = {}
+#     cnt = {}
+#     # for c in clust:
+#     #     if c not in dist:
+#     #         dist[c] = {}
+#     #     for p in points:
+#     #         dist[c][p] = sim(c,p)
+#         # dist[c] = sorted(dist[c].values())[-1]
+#     for c in clust:
+#         if c not in cnt:
+#             cnt[c] = {}
+#         for point, cluster in points.items():
+#             if point not in cnt[c]:
+#                 cnt[c][point] = {'sor': 0, 'denom': 0}
+
+#             cnt[c][point]['sor']  +=(cluster == c)*point
+#             cnt[c][point]['denom'] += (cluster == c)
+#         cnt[c] = sum([cnt[c][point]['sor'] for point in cnt[c]])/sum([cnt[c][point]['denom'] for point in cnt[c]])
+#     return cnt
+    
+
+
         
 
 def avgClusterVecs(clusters,userVectors): #SOMETHING ALONG THESE LINES
@@ -155,6 +211,7 @@ def avgClusterVecs(clusters,userVectors): #SOMETHING ALONG THESE LINES
 
 dmv = dm.getuvec()
 subkeys = list(dmv.keys())[:30]
+#TODO FILTER DOCS
 subDic = {k: dmv[k] for k in subkeys if k in dmv}
 buildClusters(subDic,5)
 

@@ -1,5 +1,6 @@
 import flask,os
 from tqdm import tqdm
+import numpy as np
 from flask import render_template,jsonify,request,redirect,url_for
 
 import graphDataBuilder as gdb
@@ -60,11 +61,11 @@ def topCount():
 
 
 @app.route('/topEdges', methods=['GET', 'POST'])
-def topEdges():
+def topEdgesCount():
     global topEdges
     global userGraph
     # print(request.args)
-    topCount = int(request.args.get('count'))
+    topEdges = int(request.args.get('count'))
     links = dm.getLinks()
     userGraph = getUserGraph(links)
     return redirect(url_for('userForce'))
@@ -76,26 +77,28 @@ def formatLinks(lnks,nodes):
     added = set()
     nodes = set(nodes)
     
-    edgeTotals = {}
+
     # counts = {}
-    bestEdges = {}
-    for user,contacts in tqdm(lnks.items(),desc='Sorting Edges'):
+    cutoff = {}
+    edgeTotals = {}
+    for user,contacts in lnks.items():
         edgeTotals[user] = 0
-        # counts[user] = 0
         for contact in contacts:
             edgeTotals[user] += lnks[user][contact]
-            # counts[user]+=1
 
-        sortedEdges = {k: v for k, v in sorted(edgeTotals.items(), key=lambda item: item[1])}
-        bestEdges[user] = set(list(reversed(list(sortedEdges)))[:topEdges])
+        # cutoff[user] = topEdges/100*edgeTotals
     
 
     for user, conn in tqdm(lnks.items(), desc='Formatting Links'):
+        # prevLen = len(conn)
+        if topEdges!=100:
+            cutoff = int(topEdges/100*len(conn))
+            conn = dict(sorted(conn.items(), key=lambda x: x[1], reverse=True)[:cutoff])
+       
         for rec in conn:
             if user == rec  or (user, rec) in added or (rec,user) in added:
                 continue
-            if rec not in bestEdges[user]:
-                continue
+            
             
             source = user.split('@')[0] if '@' in user else user
             nrec = rec.split('@')[0] if '@' in rec else rec
@@ -103,8 +106,14 @@ def formatLinks(lnks,nodes):
             if source not in nodes or nrec not in nodes:
                 continue
 
-            added.add((user, rec))
+            # cutoff = (lnks[user][rec]/edgeTotals[user])*100
+            # print(f'Value: {lnks[user][rec]}| %: {cutoff} | total: {edgeTotals[user]}')
+            # if lnks[user][rec] not in topNVals:
+            #     continue
 
+            # print(f'cutoff: {cutoff} / got {len(conn)} items from {prevLen}')
+
+            added.add((user, rec))
 
             value = min(20,lnks[user][rec])
 

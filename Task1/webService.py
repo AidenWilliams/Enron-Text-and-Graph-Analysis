@@ -1,5 +1,6 @@
 import flask,os
 from tqdm import tqdm
+import numpy as np
 from flask import render_template,jsonify,request,redirect,url_for
 
 import graphDataBuilder as gdb
@@ -41,7 +42,7 @@ def ug():
 
 @app.route('/users', methods=['GET'])
 def userForce():
-    return render_template('users.html', tcount=topCount)
+    return render_template('users.html', tcount=topCount,ecount=topEdges)
 
 @app.route('/clusters', methods=['GET'])
 def clusters():
@@ -59,18 +60,45 @@ def topCount():
     return redirect(url_for('userForce'))
 
 
+@app.route('/topEdges', methods=['GET', 'POST'])
+def topEdgesCount():
+    global topEdges
+    global userGraph
+    # print(request.args)
+    topEdges = int(request.args.get('count'))
+    links = dm.getLinks()
+    userGraph = getUserGraph(links)
+    return redirect(url_for('userForce'))
+
+
 def formatLinks(lnks,nodes):
     # fmtd = dict.fromkeys(lnks.keys())
     fmtd = []
     added = set()
     nodes = set(nodes)
+    
+
+    # counts = {}
+    cutoff = {}
+    edgeTotals = {}
+    for user,contacts in lnks.items():
+        edgeTotals[user] = 0
+        for contact in contacts:
+            edgeTotals[user] += lnks[user][contact]
+
+        # cutoff[user] = topEdges/100*edgeTotals
+    
 
     for user, conn in tqdm(lnks.items(), desc='Formatting Links'):
+        # prevLen = len(conn)
+        if topEdges!=100:
+            cutoff = int(topEdges/100*len(conn))
+            conn = dict(sorted(conn.items(), key=lambda x: x[1], reverse=True)[:cutoff])
+       
         for rec in conn:
             if user == rec  or (user, rec) in added or (rec,user) in added:
                 continue
-
-
+            
             
             source = user.split('@')[0] if '@' in user else user
             nrec = rec.split('@')[0] if '@' in rec else rec
@@ -80,18 +108,18 @@ def formatLinks(lnks,nodes):
 
             added.add((user, rec))
 
-            # x = lnks[user][rec]
             value = min(20,lnks[user][rec])
-            # value = 30*1/(1/(1 + np.exp(-x)))
+
             fmtd.append({
                 'source': source,
                 'target': nrec,
-                'value': value
+                'value': value//5
                 })
 
     return {"links":fmtd}
 
-topCount = 100
+topCount = 80
+topEdges = 100
 def topUsers(rawLinks):
     global topCount
     userTotals = {}
@@ -116,6 +144,10 @@ def getUserGraph(rawLinks):
     userGraph.update(links)
     userGraph.update(nodes)
     return userGraph
+
+
+# def topEdges(rawLinks):
+
 
 if __name__ == '__main__':
 

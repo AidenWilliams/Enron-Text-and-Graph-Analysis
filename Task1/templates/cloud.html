@@ -17,8 +17,8 @@
 
         // set the dimensions and margins of the graph
         var margin = { top: 10, right: 10, bottom: 10, left: 10 },
-            width = 1800 - margin.left - margin.right,
-            height = 900 - margin.top - margin.bottom;
+            width = window.innerWidth*0.8 - margin.left - margin.right,
+            height = window.innerHeight*0.8 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz").append("svg")
@@ -35,7 +35,7 @@
             .words(myWords.map(function (d) { return { text: d.word, size: d.size }; }))
             .padding(5)        //space between words
             .rotate(function () { return ~~(Math.random() * 2) * 0; })
-            .fontSize(function (d) { return d.size; })      // font size of words
+            .fontSize(function (d) { return d.size*10; })      // font size of words
             .on("end", draw);
         layout.start();
 
@@ -49,7 +49,7 @@
                 .data(words)
                 .enter().append("text")
                 .style("font-size", function (d) { return d.size; })
-                .style("fill", "#000")
+                // .style("fill", "#69b3a2")
                 .attr("text-anchor", "middle")
                 .style("font-family", "Impact")
                 .attr("transform", function (d) {
@@ -58,7 +58,7 @@
                 .text(function (d) { return d.text; });
         }
 
-        
+
     });
 
 

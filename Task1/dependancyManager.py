@@ -2,15 +2,21 @@ import pickle,os
 import eparser as prs
 import docProcessor as dp
 
+mode = 'maildir'
+
+root = os.path.join('data', mode)
+
+workDir = os.path.join('intermediary', mode)
+
 
 def saveToFile(data, path):
-    print('Saving')
+    print(f'Saving data to: {path}')
     with open(path, 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def loadFromFile(path):
-    print('loading from file')
+    print(f'Loading data from: {path}')
     with open(path, 'rb') as handle:
         data = pickle.load(handle)
     return data
@@ -36,11 +42,7 @@ def loadIfCan(func, path, arg=None, toSave=None):
 
         
 
-mode = 'subset'
 
-root = os.path.join('data', mode)
-
-workDir = os.path.join('intermediary', mode)
 
 _mb = None
 def getRawMB():
@@ -53,62 +55,68 @@ def getRawMB():
     if os.path.exists(mbp):
         _mb = loadFromFile(mbp)
         return _mb
-    print('MB file not found! Parsing Mailboxes from scratch')
+    # print('MB file not found! Parsing Mailboxes from scratch')
+    print('MB was not generated yet! Parsing Mailboxes from scratch')
     _mb = prs.loadData(root)
     return _mb
 
-preproc = None
+_preproc = None
+_vdocs = None
+_uvec = None
+_docs = None
+_links = None
 def getProcMB():
-    global preproc
-    if preproc is not None:
-        return preproc
+    global _preproc
+    if _preproc is not None:
+        return _preproc
     ppPath = 'preProcessed.pkl'
 
     if os.path.exists(os.path.join(workDir, ppPath)):
-       preproc =  loadFromFile(os.path.join(workDir, ppPath))
-       return preproc
+       _preproc =  loadFromFile(os.path.join(workDir, ppPath))
+       return _preproc
 
-    preproc =  loadIfCan(dp.preProcessAll, 'preProcessed.pkl', arg=getRawMB())
-    return preproc
+    _preproc =  loadIfCan(dp.preProcessAll, 'preProcessed.pkl', arg=getRawMB())
+    return _preproc
 
-vdocs = None
-uvec = None
-docs = None
-links = None
+
 def getDocs():
-    global docs
-    if docs is not None:
-        return docs
-    docs = dp.getALLDocs(getProcMB())
-    return docs
+    global _docs
+    if _docs is not None:
+        return _docs
+    _docs = dp.getALLDocs(getProcMB())
+    return _docs
 
 def getuvec():
-    global uvec
-    if uvec is not None:
-        return uvec
+    global _uvec
+    if _uvec is not None:
+        return _uvec
     uvp = 'vectorizedUsers.pkl'
     if os.path.exists(os.path.join(workDir, uvp)):
-        uvec = loadFromFile(os.path.join(workDir, uvp))
-        return uvec
-    uvec = loadIfCan(dp.vectorizeUsers, uvp, arg={'mb': getProcMB(), 'vd': getDocs()})
-    return uvec
+        _uvec = loadFromFile(os.path.join(workDir, uvp))
+        return _uvec
+    _uvec = loadIfCan(dp.vectorizeUsers, uvp, arg={'mb': getProcMB(), 'vd': getVDocs()})
+    return _uvec
 
 
 def getVDocs():
-    global vdocs
-    if vdocs is not None:
-        return vdocs
+    global _vdocs
+    if _vdocs is not None:
+        return _vdocs
 
-    vdocs = dp.vectorizeDocs(docs)
-    return vdocs
+    _vdocs = dp.vectorizeDocs(getDocs())
+    return _vdocs
 
 
 def getLinks():
-    global links
-    if links is not None:
-        return links
-    links = loadIfCan(dp.getAllLinks,  'links.pkl', arg=getRawMB())
-    return links
+    global _links
+    if _links is not None:
+        return _links
+    lp = 'links.pkl'
+    if os.path.exists(os.path.join(workDir, lp)):
+        _links = loadFromFile(os.path.join(workDir, lp))
+        return _links
+    _links = loadIfCan(dp.getAllLinks,  'links.pkl', arg=getRawMB())
+    return _links
 
 
 

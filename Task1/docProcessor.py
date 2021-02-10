@@ -191,25 +191,16 @@ def _TFIDF(TF, IDF):
     return TFIDF
 
 def vectorizeDocs(docs):
-    print('vectorizing')
+
     tfidfs = {}
-    # tfs = {}
 
     weights = _weights(docs)
 
     idf = _IDF(weights)
 
-    # for key,w in tqdm(weights.items(),desc='TF'):
-    #     tfs[key] = (_TF(w))    
-
-    # for key, tf in tqdm(tfs.items(), desc='TFIDF'):
-    #     tfidfs[key] = (_TFIDF(tf, idf))
     for key, w in tqdm(weights.items(), desc='TFIDF'):
         tfidfs[key] = _TFIDF(_TF(w), idf)
-        # if(w=='ecn-2831'):
-        #     print(w)
-    print('done vectorizing')
-    # print()
+
     return tfidfs
 
 from multiprocessing import Pool,cpu_count
@@ -267,7 +258,6 @@ def vectorizeUsers(data):
     mb = data['mb']
     vUsers = {}
 
-
     vCounts = {}
     vTotals = {}
     for users, doc in tqdm(vDocs.items(),desc='Weighting User Terms'):
@@ -306,21 +296,6 @@ def vectorizeUsers(data):
             vUsers[user][key] = vTotals[user][key]/vCounts[user][key]
     print(skipCount,'users were skipped')
     return vUsers
-
-
-
-                
-
-# if __name__ == '__main__':
-
-#     mb = dm.getMB()
-#     getStats(mb)
-#     dm.mb = mb = dm.loadIfCan(preProcessAll, 'preProcessed.pkl', arg=mb)
-#     # links = dm.loadIfCan(getAllLinks,  'links.pkl', arg=mb)
-#     # docs = getALLDocs(mb)
-#     # vectorDocs = vectorizeDocs(docs)
-#     # vectorUsers = dm.loadIfCan(vectorizeUsers, 'vectorizedUsers.pkl', arg={'mb':mb, 'vd':vectorDocs})
-#     print('done')
 
 
 

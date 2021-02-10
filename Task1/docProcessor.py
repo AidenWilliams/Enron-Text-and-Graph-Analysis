@@ -270,7 +270,7 @@ def vectorizeUsers(data):
 
     vCounts = {}
     vTotals = {}
-    for users, doc in tqdm(vDocs.items(),desc='Weighting Users:'):
+    for users, doc in tqdm(vDocs.items(),desc='Weighting User Terms'):
         A = users[0]
         B = users[1]
         if users not in vCounts:
@@ -295,7 +295,7 @@ def vectorizeUsers(data):
                 vCounts[B][word] = 1
                 vTotals[B][word] = value
     skipCount = 0;
-    for user in tqdm(getAllAddresses(mb),desc='Vectorizing Users'):
+    for user in tqdm(getAllAddresses(mb),desc='Vectorizing User Terms'):
         if user not in vCounts:
             skipCount +=1
             continue

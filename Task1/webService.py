@@ -42,7 +42,7 @@ def ug():
 
 @app.route('/users', methods=['GET'])
 def userForce():
-    return render_template('users.html', tcount=topCount)
+    return render_template('users.html', tcount=topCount,ecount=topEdges)
 
 @app.route('/clusters', methods=['GET'])
 def clusters():
@@ -106,13 +106,6 @@ def formatLinks(lnks,nodes):
             if source not in nodes or nrec not in nodes:
                 continue
 
-            # cutoff = (lnks[user][rec]/edgeTotals[user])*100
-            # print(f'Value: {lnks[user][rec]}| %: {cutoff} | total: {edgeTotals[user]}')
-            # if lnks[user][rec] not in topNVals:
-            #     continue
-
-            # print(f'cutoff: {cutoff} / got {len(conn)} items from {prevLen}')
-
             added.add((user, rec))
 
             value = min(20,lnks[user][rec])
@@ -120,7 +113,7 @@ def formatLinks(lnks,nodes):
             fmtd.append({
                 'source': source,
                 'target': nrec,
-                'value': value
+                'value': value//5
                 })
 
     return {"links":fmtd}

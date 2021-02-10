@@ -16,13 +16,16 @@ This network of character co-occurence in _Les Misérables_ is positioned by sim
         const links = data.links.map(d => Object.create(d));
         const nodes = data.nodes.map(d => Object.create(d));
 
+
         const simulation = d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id))
             .force("charge", d3.forceManyBody())
-            .force("center", d3.forceCenter(width / 2, height / 2));
+            .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2));
 
         const svg = d3.create("svg")
-            .attr("viewBox", [0, 0, width, height]);
+            .attr("width", window.innerWidth)
+            .attr("height", window.innerHeight)
+            .attr("viewBox", [0, 0, window.innerWidth, window.innerHeight]);
 
         const link = svg.append("g")
             .attr("stroke", "#999")
@@ -81,9 +84,12 @@ This network of character co-occurence in _Les Misérables_ is positioned by sim
     });
     main.variable(observer("height")).define("height", function () {
         return (
-            800
+            900
         )
     });
+
+    
+
     main.variable(observer("color")).define("color", ["d3"], function (d3) {
         const scale = d3.scaleOrdinal(d3.schemeCategory10);
         return d => scale(d.group);

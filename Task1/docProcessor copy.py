@@ -229,16 +229,18 @@ def preProcessAll(mailboxes):
                 newMailboxes[sender].append(msg)
 
     # for sender in tqdm(newMailboxes, desc=f'PreProcessing:'):
-    p = Pool(6)
+    p = Pool()
         
         # for msg in newMailboxes[sender]:
         #     msg['text'] = preProcess(msg['text'])
         # del mailboxes[sender]
-        
+    senders = newMailboxes.keys()
     newMailboxes = p.map(preProcessUser, tqdm(newMailboxes.values()))
     p.close()
     p.join()
     print('done')
+    for sender, pmb in zip(senders,newMailboxes):
+        newMailboxes[sender] = pmb
     return newMailboxes
 
 

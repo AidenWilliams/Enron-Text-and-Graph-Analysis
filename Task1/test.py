@@ -1,6 +1,7 @@
 # import pandas as pd
 import json,pickle
 from datetime import datetime
+from tqdm import tqdm
 
 prepic = {}
 with open('intermediary/maildir/prePickle/NMpreProcessed.json', 'r') as handle:
@@ -10,17 +11,13 @@ pic = {}
 with open('intermediary/maildir/preProcessed.pkl', 'rb') as handle:
     pic = pickle.load(handle)
 print('matchin')
-for pre in prepic:
-    if prepic[pre] != pic[pre]:
-        print('\ndiff!')
-        for pr,p in zip(prepic[pre],pic[pre]):
-            if pr != p:
-                for msgField in pr:
-                    if pr[msgField] != p[msgField]:
-                        if set(pr[msgField]) != set(p[msgField]):
-                            print('\n\nold: ', pr[msgField])
-                            print('new: ', p[msgField])
-        break
+for pre in tqdm(prepic):
+    for pr,p in zip(prepic[pre],pic[pre]):
+        for msgField in pr:
+            if set(pr[msgField]) != set(p[msgField]):
+                print('\n\nold: ', pr[msgField])
+                print('new: ', p[msgField])
+        # break
 print('done')
 # startN = datetime.now()
 # with open('intermediary/maildir/mb.json','r') as f:

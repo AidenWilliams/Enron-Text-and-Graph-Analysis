@@ -29,6 +29,59 @@ def sim(A, B):
     return dot(A, B) / denom
 
 
+class point:
+    parentCluster = None
+    data = []  # data vec
+
+    def __init__(self,dt):
+        self.parentCluster = None
+        self.data = dt
+    
+
+    def similarityTo(self,clust):
+        return sim(self.data, clust.centroid)
+
+    def assignClosest(self,clusters):
+        sims = {}
+        for c in clusters:
+            sims[c] = self.similarityTo(c)
+        topClust = dict(sorted(sims.items(), key=lambda item: item[1],reverse=True)).keys()[0]
+        self.parentCluster = topClust
+
+
+
+class Cluster:
+    centroid = []  # data vec
+    points = []
+
+    def __init__(self, cntrd):
+        self.centroid = cntrd 
+
+    def reCalc(self):
+        sims = {}
+        for p in self.points:
+            sim[p] = p.similarityTo(self)
+
+        total = sum(sim.values())
+        lng = len(sim)
+        mean = total/lng
+        self.centroid = mean
+
+
+class clusterSet:
+    clusters = []
+    def __init__(self,clusters):
+        self.clusters = clusters
+    
+    def reCalcAll(self):
+        for c in self.clusters:
+            c.reCalc()
+
+
+
+
+
+
 def closestCentr(prev,docs):
     distances = {}
     for d in docs:
@@ -84,9 +137,11 @@ def buildClusters(userDocs, k):
         
         s = sim(prevClust, currClust)        
 
+        closest = closestCentr(currClust, userDocs)
+
         prevClust = currClust
         currClust = calcCentroids(closest,currClust)
-        closest = closestCentr(currClust, userDocs)
+        
 
 def avgClusterVecs(clusters,userVectors): #SOMETHING ALONG THESE LINES
     avgs = {}

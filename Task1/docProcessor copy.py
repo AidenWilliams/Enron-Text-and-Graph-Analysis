@@ -3,8 +3,8 @@ import json,os,math
 from tqdm import tqdm
 import pickle
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
 
 
 
@@ -234,8 +234,7 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
-
-    p = Pool(6)        
+    p = Pool(processes=cpu_count // 2)
     # for sender in tqdm(newMailboxes, desc=f'PreProcessing:'):
     # p = Pool()
         
@@ -243,10 +242,9 @@ def preProcessAll(mailboxes):
         #     msg['text'] = preProcess(msg['text'])
         # del mailboxes[sender]
     senders = newMailboxes.keys()
-    processed = p.map(preProcessUser, tqdm(newMailboxes.values()))
+    processed = p.map(preProcessUser, tqdm(newMailboxes.values(),desc='PreProcessing'))
     p.close()
     p.join()
-    print('done')
     for sender, pmb in zip(senders,processed):
         newMailboxes[sender] = pmb
     return newMailboxes

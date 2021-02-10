@@ -149,12 +149,7 @@ def getUserGraph(rawLinks):
 # def topEdges(rawLinks):
 
 
-if __name__ == '__main__':
-
-    # var = 'maildir'
-    # workDir = os.path.join('intermediary', var)
-    # path = os.path.join(workDir, 'vectorizedUsers.json')
-    
+if __name__ == '__main__':    
 
     links = dm.getLinks()
     userGraph = getUserGraph(links)

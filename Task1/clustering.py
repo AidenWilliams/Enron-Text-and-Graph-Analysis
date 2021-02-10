@@ -1,4 +1,5 @@
 from random import randint
+import dependancyManager as dm
 # def sim(A,B):
 #     sim = {}
 #     for x in A:
@@ -28,41 +29,58 @@ def sim(A, B):
     return dot(A, B) / denom
 
 
-# def findClosestCentroids(ic, X):
-#     assigned_centroid = []
-#     for i in X:
-#         distance = []
-#         for j in ic:
-#             distance.append(sim(i, j))
-#         assigned_centroid.append(np.argmin(distance))
-#     return assigned_centroid
+class point:
+    parentCluster = None
+    data = []  # data vec
+
+    def __init__(self,dt):
+        self.parentCluster = None
+        self.data = dt
+    
+
+    def similarityTo(self,clust):
+        return sim(self.data, clust.centroid)
+
+    def assignClosest(self,clusters):
+        sims = {}
+        for c in clusters:
+            sims[c] = self.similarityTo(c)
+        topClust = dict(sorted(sims.items(), key=lambda item: item[1],reverse=True)).keys()[0]
+        self.parentCluster = topClust
 
 
-# def calc_centroids(clusters, X):
-#     new_centroids = []
-#     new_df = pd.concat([pd.DataFrame(X), pd.DataFrame(clusters, columns=['cluster'])],axis=1)
-#     for c in set(new_df['cluster']):
-#         current_cluster = new_df[new_df['cluster'] == c][new_df.columns[:-1]]
-#         cluster_mean = current_cluster.mean(axis=0)
-#         new_centroids.append(cluster_mean)
-#     return new_centroids
 
-# def buildClusters(userDocs, k):
-#     currCentroids = {}
-#     prevCentroids = {}
+class Cluster:
+    centroid = []  # data vec
+    points = []
 
-#     for c in currCentroids:
+    def __init__(self, cntrd):
+        self.centroid = cntrd 
 
-#     s = sim(currCentroids, prevCentroids)
-#     clusters = {}
-#     sims = {}
+    def reCalc(self):
+        sims = {}
+        for p in self.points:
+            sim[p] = p.similarityTo(self)
 
-#     while(s!=1): #no change in clusters
-#         for user, doc in userDocs.items():
-#             sims[user].append( sim(currCentroids,doc))
-#             k = max(sims[user])
+        total = sum(sim.values())
+        lng = len(sim)
+        mean = total/lng
+        self.centroid = mean
 
-    # pass
+
+class clusterSet:
+    clusters = []
+    def __init__(self,clusters):
+        self.clusters = clusters
+    
+    def reCalcAll(self):
+        for c in self.clusters:
+            c.reCalc()
+
+
+
+
+
 
 def closestCentr(prev,docs):
     distances = {}
@@ -100,25 +118,89 @@ def calcCentroids(points,clust):
 def buildClusters(userDocs, k):
     init = []
     lng = len(userDocs)
-    for i in range(k):
+    if k > lng:
+        ValueError("K larger than document count!")
+    while(len(init))< k:
         ind = randint(0,lng-1)
-        init.append(ind)
+        if ind not in init:
+            init.append(ind)
     initClusters = []
     for x in init:
-        initClusters.append(userDocs[x])
+        initClusters.append(list(list(userDocs.values())[x].values()))
     currClust = initClusters
     prevClust = []
-    s = sim(currClust, currClust)
+    s = sim(currClust, prevClust)
+
 
     closest = closestCentr(currClust, userDocs)
     while(s!=1):
         
         s = sim(prevClust, currClust)        
 
+        closest = closestCentr(currClust, userDocs)
+
         prevClust = currClust
         currClust = calcCentroids(closest,currClust)
-        closest = closestCentr(currClust, userDocs)
+        
+
+def avgClusterVecs(clusters,userVectors): #SOMETHING ALONG THESE LINES
+    avgs = {}
+    for cluster in clusters:        
+        totals = counts = 0
+        for user in cluster:
+            totals+=userVectors[user]
+            counts+=1
+        avgs[cluster] = totals/counts
+
+
+dmv = dm.getuvec()
+subkeys = list(dmv.keys())[:30]
+subDic = {k: dmv[k] for k in subkeys if k in dmv}
+buildClusters(subDic,5)
+
 
 def filterDocs(userDocs): #here we will minimise the amount of nodes to calm things down for the clustering!
     #return userDocs
+
+    #maybe use top nodes ? 
+
+    #rank docs based on something
+    #choose top N docs
     pass
+
+
+# def findClosestCentroids(ic, X):
+#     assigned_centroid = []
+#     for i in X:
+#         distance = []
+#         for j in ic:
+#             distance.append(sim(i, j))
+#         assigned_centroid.append(np.argmin(distance))
+#     return assigned_centroid
+
+
+# def calc_centroids(clusters, X):
+#     new_centroids = []
+#     new_df = pd.concat([pd.DataFrame(X), pd.DataFrame(clusters, columns=['cluster'])],axis=1)
+#     for c in set(new_df['cluster']):
+#         current_cluster = new_df[new_df['cluster'] == c][new_df.columns[:-1]]
+#         cluster_mean = current_cluster.mean(axis=0)
+#         new_centroids.append(cluster_mean)
+#     return new_centroids
+
+# def buildClusters(userDocs, k):
+#     currCentroids = {}
+#     prevCentroids = {}
+
+#     for c in currCentroids:
+
+#     s = sim(currCentroids, prevCentroids)
+#     clusters = {}
+#     sims = {}
+
+#     while(s!=1): #no change in clusters
+#         for user, doc in userDocs.items():
+#             sims[user].append( sim(currCentroids,doc))
+#             k = max(sims[user])
+
+    # pass

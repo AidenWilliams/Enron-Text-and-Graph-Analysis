@@ -235,11 +235,11 @@ def preProcessAll(mailboxes):
         #     msg['text'] = preProcess(msg['text'])
         # del mailboxes[sender]
     senders = newMailboxes.keys()
-    newMailboxes = p.map(preProcessUser, tqdm(newMailboxes.values()))
+    processed = p.map(preProcessUser, tqdm(newMailboxes.values()))
     p.close()
     p.join()
     print('done')
-    for sender, pmb in zip(senders,newMailboxes):
+    for sender, pmb in zip(senders,processed):
         newMailboxes[sender] = pmb
     return newMailboxes
 

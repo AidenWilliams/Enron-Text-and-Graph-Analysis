@@ -1,13 +1,13 @@
 from random import randint
 import dependancyManager as dm
-
+Vector = list[float]
 
 
 def dot(A, B):
     return (sum(a*b for a, b in zip(A, B)))
 
 
-def sim(A, B):
+def sim(A: Vector, B:Vector) -> float:
     denom = ((dot(A, A) ** .5) * (dot(B, B) ** .5))
     if denom == 0:
         return 0
@@ -18,12 +18,12 @@ class point:
     parentCluster = None
     data = {}  # data vec
 
-    def __init__(self,dt):
+    def __init__(self,dt:dict):
         self.parentCluster = None
         self.data = dt
     
 
-    def similarityTo(self,clust):
+    def similarityTo(self,clust) -> float:
         thisV = clV = []
         for word,weight in self.data.items():
             thisV.append(weight)
@@ -44,11 +44,12 @@ class point:
 
 
 class Cluster:
-    centroid = {}  # data vec
+    centroid = None  # data vec
     points = []
 
-    def __init__(self, cntrd):
-        self.centroid = cntrd 
+    def __init__(self, centroid:point):
+        self.centroid = centroid
+        # self.points = points
 
     def reCalc(self):
         totals = {}
@@ -72,10 +73,17 @@ class clusterSet:
         for c in self.clusters:
             c.reCalc()
 
-    # def distanceToOtherSet(self,other):   #IDK WHAT TO DO HERE
-    #     return sim()
+    def distanceToOtherSet(self,other) -> float:   #IDK WHAT TO DO HERE
+        total = count = 0
+        for cA,cB in zip(self.clusters,other.clusters):
+            cav = list(cA.centroid.data.values())
+            cbv = list(cB.centroid.data.values())
+            total+=sim(cav,cbv)
+            # total+=sim(cA.data,cB.data)
+            count+=1
+        return total/count
 
-    # def distanceToVec(slef,vec):          #IDK WHAT TO DO HERE
+    # def distanceToPoint(slef,vec):          #IDK WHAT TO DO HERE//needed??
     #     return sim()
 
     def reAssignPoints(self):
@@ -87,11 +95,7 @@ class clusterSet:
             p.assignClosest(self.clusters)
             
 
-dmv = dm.getuvec()
-subkeys = list(dmv.keys())[:30]
-#TODO FILTER DOCS
-subDic = {k: dmv[k] for k in subkeys if k in dmv}
-buildClusters(subDic, 5)
+
 
 
 # here we will minimise the amount of nodes to calm things down for the clustering!
@@ -107,18 +111,22 @@ def filterDocs(userDocs):
 
 def randomInit(userDocs,k):
     init = []
-    while(len(init)) < k:
+    lng = len(userDocs)
+
+    while(len(init)) < k: #choose k random indices
         ind = randint(0, lng-1)
         if ind not in init:
             init.append(ind)
+
     initClusters = []
     for x in init:
-        points = list(list(userDocs.values())[x].values())
-        clst = Cluster(points)
+        # points = list(list(userDocs.values())[x].values())
+        data = list(userDocs.values())[x]
+        clst = Cluster(point(data))
         initClusters.append(clst)
     return initClusters
 
-def buildClusters(userDocs, k):
+def buildClusters(userDocs, k:int):
     
     lng = len(userDocs)
     if k > lng:
@@ -126,52 +134,28 @@ def buildClusters(userDocs, k):
     
     initClusters = randomInit(userDocs,k)
     currClust = clusterSet(initClusters)
-    prevClust = []
-    s = sim(currClust, prevClust)
+    # prevClust = clusterSet
+    # s = currClust.distanceToOtherSet(prevClust)
 
     # closest = closestCentr(currClust, userDocs)
     while True:
-
         
         currClust.reAssignPoints()
         prevClust = currClust
         currClust.reCalculateCentroids()
 
-        s = sim(currClust.centroid,prevClust.centroid)
+        s = currClust.distanceToOtherSet(prevClust)
+
+        print('\r',s,end='')
         if s==1:
             return currClust
-        # closest = closestCentr(currClust, userDocs)
-
-        # prevClust = currClust
-        # currClust = calcCentroids(closest, currClust)
-
-# def buildClusters(userDocs, k):
-#     init = []
-#     lng = len(userDocs)
-#     if k > lng:
-#         ValueError("K larger than document count!")
-#     while(len(init)) < k:
-#         ind = randint(0, lng-1)
-#         if ind not in init:
-#             init.append(ind)
-#     initClusters = []
-#     for x in init:
-#         initClusters.append(list(list(userDocs.values())[x].values()))
-#     currClust = initClusters
-#     prevClust = []
-#     s = sim(currClust, prevClust)
-
-#     closest = closestCentr(currClust, userDocs)
-#     while(s != 1):
-
-#         s = sim(prevClust, currClust)
-
-#         closest = closestCentr(currClust, userDocs)
-
-#         prevClust = currClust
-#         currClust = calcCentroids(closest, currClust)
 
 
+dmv = dm.getuvec()
+subkeys = list(dmv.keys())[:10]
+#TODO FILTER DOCS
+subDic = {k: dmv[k] for k in subkeys if k in dmv}
+buildClusters(subDic, 5)
 
 
 # def closestCentr(prev,docs):

@@ -36,39 +36,40 @@ def loadIfCan(func, path, arg=None, toSave=None):
 
         
 
-mode = 'maildir'
+mode = 'subset'
 
 root = os.path.join('data', mode)
 
 workDir = os.path.join('intermediary', mode)
 
-mb = None
+_mb = None
 def getRawMB():
-    global mb
+    global _mb
 
     mbp = os.path.join(workDir, 'mb.pkl')
-    if mb is not None:
-        return mb
+    if _mb is not None:
+        return _mb
     # print('')
     if os.path.exists(mbp):
-        mb = loadFromFile(mbp)
-        return mb
+        _mb = loadFromFile(mbp)
+        return _mb
     print('MB file not found! Parsing Mailboxes from scratch')
-    mb = prs.loadData(root)
-    return mb
+    _mb = prs.loadData(root)
+    return _mb
 
 preproc = None
 def getProcMB():
     global preproc
-    if preproc is None:
+    if preproc is not None:
         return preproc
     ppPath = 'preProcessed.pkl'
+
     if os.path.exists(os.path.join(workDir, ppPath)):
        preproc =  loadFromFile(os.path.join(workDir, ppPath))
        return preproc
-    else:
-        preproc =  loadIfCan(dp.preProcessAll, 'preProcessed.pkl', arg=getRawMB())
-        return preproc
+
+    preproc =  loadIfCan(dp.preProcessAll, 'preProcessed.pkl', arg=getRawMB())
+    return preproc
 
 vdocs = None
 uvec = None
@@ -78,7 +79,7 @@ def getDocs():
     global docs
     if docs is not None:
         return docs
-    docs = dp.getALLDocs(mb)
+    docs = dp.getALLDocs(getProcMB())
     return docs
 
 def getuvec():
@@ -89,7 +90,7 @@ def getuvec():
     if os.path.exists(os.path.join(workDir, uvp)):
         uvec = loadFromFile(os.path.join(workDir, uvp))
         return uvec
-    uvec = loadIfCan(dp.vectorizeUsers, uvp, arg={'mb': mb, 'vd': getDocs()})
+    uvec = loadIfCan(dp.vectorizeUsers, uvp, arg={'mb': getProcMB(), 'vd': getDocs()})
     return uvec
 
 

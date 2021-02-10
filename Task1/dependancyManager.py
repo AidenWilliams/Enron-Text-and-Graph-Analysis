@@ -6,7 +6,7 @@ mode = 'maildir'
 
 root = os.path.join('data', mode)
 
-workDir = os.path.join('intermediary', mode)
+workDir = os.path.join('Task1','intermediary', mode)
 
 
 def saveToFile(data, path):

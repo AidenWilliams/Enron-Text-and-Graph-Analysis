@@ -1,12 +1,13 @@
 import flask,os
-from math import floor
 from tqdm import tqdm
 from flask import render_template,jsonify,request,redirect,url_for
-from flask import json
+
 import graphDataBuilder as gdb
+import dependancyManager as dm
+
 import mimetypes
 mimetypes.add_type('application/javascript', '.mjs')
-import numpy as np
+
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -53,7 +54,8 @@ def topCount():
     global userGraph
     # print(request.args)
     topCount = int(request.args.get('count'))
-    userGraph = getUserGraph(vectorUsers)
+    links = dm.getLinks()
+    userGraph = getUserGraph(links)
     return redirect(url_for('userForce'))
 
 
@@ -103,17 +105,11 @@ def topUsers(rawLinks):
     return nodes
 
 
-def getUserGraph(vectorUsers):
-    path = os.path.join(workDir, 'links.json')
-    rawLinks = gdb._loadFromFile(path)
-
-    # rawNodes = gdb.getNodes(vectorUsers)
+def getUserGraph(rawLinks):
 
     topNodes = topUsers(rawLinks)
-    # print(f'topusers: {topNodes}')
     links = formatLinks(rawLinks, topNodes)
 
-    # nodes = {'nodes': [{'id': name} for name in rawNodes]}
     nodes = {'nodes': [{'id': name} for name in topNodes]}
 
     userGraph = {}
@@ -123,15 +119,14 @@ def getUserGraph(vectorUsers):
 
 if __name__ == '__main__':
 
-    var = 'maildir'
-    workDir = os.path.join('intermediary', var)
-    path = os.path.join(workDir, 'vectorizedUsers.json')
+    # var = 'maildir'
+    # workDir = os.path.join('intermediary', var)
+    # path = os.path.join(workDir, 'vectorizedUsers.json')
     
 
-    vectorUsers = gdb._loadFromFile(path)
+    links = dm.getLinks()
+    userGraph = getUserGraph(links)
 
-    userGraph = getUserGraph(vectorUsers)
-    
-
+    vectorUsers = dm.getuvec()
     topTerms = gdb.topUserTerms(vectorUsers, 20)
     app.run(host='0.0.0.0',port=6969)

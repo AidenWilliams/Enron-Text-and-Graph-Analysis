@@ -1,22 +1,16 @@
 # from parser import myDict
-import json,os,math
+import os,math
 from tqdm import tqdm
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
+from multiprocessing import Pool, cpu_count
+nltk.download('punkt', quiet=True)
+nltk.download('stopwords', quiet=True)
+
+import dependancyManager as dm
 
 
 
-def _saveToFile(data, path):
-    print('Saving')
-    with open(path, 'w') as fp:
-        json.dump(data, fp, indent=4)
 
-
-def _loadFromFile(path):
-    print('loading from file')
-    with open(path) as f:
-        return json.load(f)
 
 def getStats(mailboxes):
     emailCount = count = tosCount = 0
@@ -218,7 +212,7 @@ def vectorizeDocs(docs):
     # print()
     return tfidfs
 
-
+from multiprocessing import Pool,cpu_count
 def preProcessAll(mailboxes):
     newMailboxes = {}
     for sender, msgs in mailboxes.items():
@@ -228,14 +222,22 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
-    for sender in tqdm(newMailboxes, desc=f'PreProcessing:'):
-        for msg in newMailboxes[sender]:
-            msg['text'] = preProcess(msg['text'])
-        del mailboxes[sender]
-
+    p = Pool(processes=cpu_count() // 2)
+    senders = newMailboxes.keys()
+    processed = p.map(preProcessUser, tqdm(newMailboxes.values(),desc='PreProcessing'))
+    p.close()
+    p.join()
+    for sender, pmb in zip(senders,processed):
+        newMailboxes[sender] = pmb
     return newMailboxes
 
 
+def preProcessUser(messages):
+    newMSGS = []
+    for msg in messages:
+        msg['text'] = preProcess(msg['text'])
+        newMSGS.append(msg)
+    return newMSGS
 
 def getALLDocs(mbxs):
     docs = {}
@@ -257,19 +259,7 @@ def getALLDocs(mbxs):
     return docs
 
 
-def loadIfCan(func, path, arg=None,toSave = None):
-    if os.path.exists(path):
-        return _loadFromFile(path)
 
-    if arg is None:
-        item = func()
-    else:
-        item = func(arg)
-
-    if toSave is not None:
-        item = toSave
-    _saveToFile(item, path)
-    return item
 
 
 def vectorizeUsers(data):
@@ -321,25 +311,16 @@ def vectorizeUsers(data):
 
                 
 
-if __name__ == '__main__':
-    var = 'maildir'
-    root = os.path.join('data', var)
+# if __name__ == '__main__':
 
-    workDir = os.path.join('intermediary', var)
-
-    with open(os.path.join(workDir, 'mb.json'), 'r') as f:
-        mb = json.load(f)
-
-    getStats(mb)
-    mb = loadIfCan(preProcessAll, os.path.join(workDir, 'preProcessed.json'), arg=mb)
-
-    links = loadIfCan(getAllLinks, os.path.join(workDir, 'links.json'), arg=mb)
-    docs = getALLDocs(mb)
-    # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
-    vectorDocs = vectorizeDocs(docs)
-    vectorUsers = loadIfCan(vectorizeUsers, os.path.join(workDir, 'vectorizedUsers.json'), arg={'mb':mb, 'vd':vectorDocs})
-    print('done')
-    # vectorUsers = vectorizeUsers({'mb':mb, 'vd':vectorDocs})
+#     mb = dm.getMB()
+#     getStats(mb)
+#     dm.mb = mb = dm.loadIfCan(preProcessAll, 'preProcessed.pkl', arg=mb)
+#     # links = dm.loadIfCan(getAllLinks,  'links.pkl', arg=mb)
+#     # docs = getALLDocs(mb)
+#     # vectorDocs = vectorizeDocs(docs)
+#     # vectorUsers = dm.loadIfCan(vectorizeUsers, 'vectorizedUsers.pkl', arg={'mb':mb, 'vd':vectorDocs})
+#     print('done')
 
 
 

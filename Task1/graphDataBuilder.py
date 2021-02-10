@@ -1,17 +1,17 @@
 #build graphable data by using the data given in previous step
 import os,json,math
 from tqdm import tqdm
-from docProcessor import getStats
+# import dependancyManager as dm
 
-def _loadFromFile(path):
-    print('loading from file')
-    with open(path) as f:
-        return json.load(f)
+# def _loadFromFile(path):
+#     print('loading from file')
+#     with open(path) as f:
+#         return json.load(f)
 
 
-def topUserTerms(uVec,n):
+def topUserTerms(vUsers, n):
     topTerms = {}
-    for user, vec in tqdm(uVec.items(), desc='Top User Terms'):
+    for user, vec in tqdm(vUsers.items(), desc='Top User Terms'):
         user = user.split('@')[0]
         topTerms[user]= {}
         sortedTerms = {k: v for k, v in sorted(vec.items(), key=lambda item: item[1])}
@@ -27,16 +27,16 @@ def getNodes(vUsers):
 
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     
-    var = 'subset'
-    workDir = os.path.join('intermediary', var)
-    path = os.path.join(workDir, 'vectorizedUsers.json')
+    # var = 'subset'
+    # workDir = os.path.join('intermediary', var)
+    # path = os.path.join(workDir, 'vectorizedUsers.json')
 
-    vectorUsers = _loadFromFile(path)
-    topTerms = topUserTerms(vectorUsers,10)
+    # vectorUsers = dm.loadFromFile(path)
+    # topTerms = topUserTerms(vectorUsers,10)
 
-    someNames = list(vectorUsers.keys())[:10]
-    # someName = someNames[:5]
-    for someName in someNames:
-        print(topTerms[someName])
+    # someNames = list(vectorUsers.keys())[:10]
+    # # someName = someNames[:5]
+    # for someName in someNames:
+    #     print(topTerms[someName])

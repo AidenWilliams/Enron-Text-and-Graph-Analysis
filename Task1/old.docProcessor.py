@@ -1,29 +1,22 @@
 # from parser import myDict
 import json,os,math
 from tqdm import tqdm
-import pickle
 import nltk
-from multiprocessing import Pool, cpu_count
-nltk.download('punkt', quiet=True)
-nltk.download('stopwords', quiet=True)
+nltk.download('punkt')
+nltk.download('stopwords')
 
 
 
 def _saveToFile(data, path):
     print('Saving')
-    # with open(path, 'w') as fp:
-    #     json.dump(data, fp, indent=4)
-    with open(path, 'wb') as handle:
-        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open(path, 'w') as fp:
+        json.dump(data, fp, indent=4)
 
 
 def _loadFromFile(path):
     print('loading from file')
-    # with open(path) as f:
-    #     return json.load(f)
-    with open(path, 'rb') as handle:
-        data = pickle.load(handle)
-    return data
+    with open(path) as f:
+        return json.load(f)
 
 def getStats(mailboxes):
     emailCount = count = tosCount = 0
@@ -225,7 +218,7 @@ def vectorizeDocs(docs):
     # print()
     return tfidfs
 
-from multiprocessing import Pool,cpu_count
+
 def preProcessAll(mailboxes):
     newMailboxes = {}
     for sender, msgs in mailboxes.items():
@@ -235,25 +228,14 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
-    p = Pool(processes=cpu_count() // 2)
-    senders = newMailboxes.keys()
-    processed = p.map(preProcessUser, tqdm(newMailboxes.values(),desc='PreProcessing'))
-    p.close()
-    p.join()
-    for sender, pmb in zip(senders,processed):
-        newMailboxes[sender] = pmb
+    for sender in tqdm(newMailboxes, desc=f'PreProcessing:'):
+        for msg in newMailboxes[sender]:
+            msg['text'] = preProcess(msg['text'])
+        del mailboxes[sender]
+
     return newMailboxes
 
 
-def preProcessUser(messages):
-    newMSGS = []
-    for msg in messages:
-        msg['text'] = preProcess(msg['text'])
-        newMSGS.append(msg)
-    
-    # msg['text'] = preProcess(msg['text'])
-    # return msg
-    return newMSGS
 
 def getALLDocs(mbxs):
     docs = {}
@@ -349,13 +331,13 @@ if __name__ == '__main__':
         mb = json.load(f)
 
     getStats(mb)
-    mb = loadIfCan(preProcessAll, os.path.join(workDir, 'preProcessed.pkl'), arg=mb)
+    mb = loadIfCan(preProcessAll, os.path.join(workDir, 'preProcessed.json'), arg=mb)
 
-    links = loadIfCan(getAllLinks, os.path.join(workDir, 'links.pkl'), arg=mb)
+    links = loadIfCan(getAllLinks, os.path.join(workDir, 'links.json'), arg=mb)
     docs = getALLDocs(mb)
     # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
     vectorDocs = vectorizeDocs(docs)
-    vectorUsers = loadIfCan(vectorizeUsers, os.path.join(workDir, 'vectorizedUsers.pkl'), arg={'mb':mb, 'vd':vectorDocs})
+    vectorUsers = loadIfCan(vectorizeUsers, os.path.join(workDir, 'vectorizedUsers.json'), arg={'mb':mb, 'vd':vectorDocs})
     print('done')
     # vectorUsers = vectorizeUsers({'mb':mb, 'vd':vectorDocs})
 

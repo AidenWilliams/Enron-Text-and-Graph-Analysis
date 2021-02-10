@@ -52,35 +52,35 @@ def loadData(root):
                 continue
 
             for file in os.listdir(folderPath):
-                addAll(dic, os.path.join(rootDir, user, folder, file))
+                addAll(dic, os.path.join(root, user, folder, file))
     return dic
 
 
-def _saveToFile(data, path):
-    print('Saving')
-    with open(path, 'w') as fp:
-        json.dump(data, fp, indent=4)
+# def _saveToFile(data, path):
+#     print('Saving')
+#     with open(path, 'w') as fp:
+#         json.dump(data, fp, indent=4)
 
 
-def getMB(path,root):
-    if os.path.isfile(path) and os.access(path, os.R_OK):
-        print("Mailboxes file found!")
-        print('Reading...')
-        with open(path, 'r') as f:
-            myDict = json.load(f)
+# def getMB(path,root):
+#     if os.path.isfile(path) and os.access(path, os.R_OK):
+#         print("Mailboxes file found!")
+#         print('Reading...')
+#         with open(path, 'r') as f:
+#             myDict = json.load(f)
 
-    else:
-        print("Either file is missing or is not readable, creating file...")
-        myDict = loadData(root)
-        _saveToFile(myDict, path)
+#     else:
+#         print("Either file is missing or is not readable, creating file...")
+#         myDict = loadData(root)
+#         _saveToFile(myDict, path)
 
-    return myDict
+#     return myDict
 
-if __name__ == '__main__':
-    var = 'maildir'
-    rootDir = os.path.join('data', var)
-    path = os.path.join('intermediary', var, 'mb.json')
+# if __name__ == '__main__':
+#     var = 'maildir'
+#     rootDir = os.path.join('data', var)
+#     path = os.path.join('intermediary', var, 'mb.json')
 
-    myDict = getMB(path,rootDir)
+    # myDict = getMB(path,rootDir)
 
     

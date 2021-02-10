@@ -1,5 +1,5 @@
 import pickle,os
-import parser as prs
+import eparser as prs
 import docProcessor as dp
 
 
@@ -89,7 +89,7 @@ def getuvec():
     if os.path.exists(os.path.join(workDir, uvp)):
         uvec = loadFromFile(os.path.join(workDir, uvp))
         return uvec
-    uvec = loadIfCan(dp.vectorizeUsers, ubp, arg={'mb': mb, 'vd': getDocs()})
+    uvec = loadIfCan(dp.vectorizeUsers, uvp, arg={'mb': mb, 'vd': getDocs()})
     return uvec
 
 
@@ -100,26 +100,14 @@ def getVDocs():
 
     vdocs = dp.vectorizeDocs(docs)
     return vdocs
+
+
 def getLinks():
     global links
     if links is not None:
         return links
-    inks = loadIfCan(dp.getAllLinks,  'links.pkl', arg=getRawMB())
-
-def buildALL():
-    # global mb,links,docs,vectorDocs,vectorUsers,built
-    # if built:
-    #     return {'mb':mb,'vdocs':vectorDocs,'vusers':vectorUsers,'links':links}
-    
-    
-
-    
-    #by now we have a preprocessed mailboxes file, we can do further operations
-
-    l
-    
-    
-    vectorUsers = 
+    links = loadIfCan(dp.getAllLinks,  'links.pkl', arg=getRawMB())
+    return links
 
 
 

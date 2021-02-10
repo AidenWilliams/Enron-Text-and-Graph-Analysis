@@ -1,6 +1,7 @@
 # from parser import myDict
 import json,os,math
 from tqdm import tqdm
+import pickle
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -9,14 +10,19 @@ nltk.download('stopwords')
 
 def _saveToFile(data, path):
     print('Saving')
-    with open(path, 'w') as fp:
-        json.dump(data, fp, indent=4)
+    # with open(path, 'w') as fp:
+    #     json.dump(data, fp, indent=4)
+    with open(path, 'wb') as handle:
+        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def _loadFromFile(path):
     print('loading from file')
-    with open(path) as f:
-        return json.load(f)
+    # with open(path) as f:
+    #     return json.load(f)
+    with open(path, 'rb') as handle:
+        data = pickle.load(handle)
+    return data
 
 def getStats(mailboxes):
     emailCount = count = tosCount = 0
@@ -228,8 +234,10 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
+
+    p = Pool(6)        
     # for sender in tqdm(newMailboxes, desc=f'PreProcessing:'):
-    p = Pool()
+    # p = Pool()
         
         # for msg in newMailboxes[sender]:
         #     msg['text'] = preProcess(msg['text'])
@@ -349,13 +357,13 @@ if __name__ == '__main__':
         mb = json.load(f)
 
     getStats(mb)
-    mb = loadIfCan(preProcessAll, os.path.join(workDir, 'preProcessed.json'), arg=mb)
+    mb = loadIfCan(preProcessAll, os.path.join(workDir, 'preProcessed.pkl'), arg=mb)
 
-    links = loadIfCan(getAllLinks, os.path.join(workDir, 'links.json'), arg=mb)
+    links = loadIfCan(getAllLinks, os.path.join(workDir, 'links.pkl'), arg=mb)
     docs = getALLDocs(mb)
     # vectorDocs = loadIfCan(vectorizeDocs, os.path.join('intermediary', 'svectorizedDocs.json'), docs)
     vectorDocs = vectorizeDocs(docs)
-    vectorUsers = loadIfCan(vectorizeUsers, os.path.join(workDir, 'vectorizedUsers.json'), arg={'mb':mb, 'vd':vectorDocs})
+    vectorUsers = loadIfCan(vectorizeUsers, os.path.join(workDir, 'vectorizedUsers.pkl'), arg={'mb':mb, 'vd':vectorDocs})
     print('done')
     # vectorUsers = vectorizeUsers({'mb':mb, 'vd':vectorDocs})
 

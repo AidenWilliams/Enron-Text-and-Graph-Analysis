@@ -228,14 +228,17 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
-    for sender in tqdm(newMailboxes, desc=f'PreProcessing:'):
-        p = Pool()
+    # for sender in tqdm(newMailboxes, desc=f'PreProcessing:'):
+    p = Pool(6)
+        
         # for msg in newMailboxes[sender]:
         #     msg['text'] = preProcess(msg['text'])
         # del mailboxes[sender]
         
-        newMailboxes[sender] = p.map(preProcessUser, newMailboxes[sender])
-
+    newMailboxes = p.map(preProcessUser, tqdm(newMailboxes.values()))
+    p.close()
+    p.join()
+    print('done')
     return newMailboxes
 
 
@@ -245,6 +248,9 @@ def preProcessUser(messages):
         if msg['tos']:
             msg['text'] = preProcess(msg['text'])
             newMSGS.append(msg)
+    
+    # msg['text'] = preProcess(msg['text'])
+    # return msg
     return newMSGS
 
 def getALLDocs(mbxs):

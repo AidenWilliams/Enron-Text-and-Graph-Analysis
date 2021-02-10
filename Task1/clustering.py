@@ -182,11 +182,9 @@ def buildClusters(userDocs, k:int):
     initClusters = randomInit(userDocs,k)
     currClust = clusterSet(initClusters)
     currClust.firstAssignPoints(userDocs)
-    # prevClust = clusterSet
-    # s = currClust.distanceToOtherSet(prevClust)
 
     # closest = closestCentr(currClust, userDocs)
-    distances = [-1,-1,-1]
+    distances = [-1,-1,-1] # if we have same 3 distances in a row, we are done
     while True:
         
         currClust.reAssignPoints()
@@ -194,21 +192,40 @@ def buildClusters(userDocs, k:int):
         currClust = currClust.reCalculateCentroids()
 
         s = currClust.distanceToOtherSet(prevClust)
-
-        # print('\r',s,end='')
-        print(s)
+        
         distances.pop(0)
         distances.append(s)
+        print(distances)
 
         if s>=1 or len(set(distances))<=1:
             return currClust
 
 
 dmv = dm.getuvec()
-subkeys = list(dmv.keys())[:3000]
+subkeys = list(dmv.keys())[:300]
 #TODO FILTER DOCS
 subDic = {k: dmv[k] for k in subkeys if k in dmv}
-buildClusters(subDic, 5)
+clusters = buildClusters(subDic, 20).clusters
+
+
+matching = 0
+count = 0
+for cl in clusters:
+    if len(cl.points)>1:
+        for pt in cl.points:
+            for pt2 in cl.points:
+                if pt == pt2:
+                    continue
+                for key in pt.data:
+                    count+=1
+                    if key in pt2.data:
+                        matching+=1
+        break
+
+print(f'matching: {matching} | %: {matching/count}')
+            # for point in pts:
+            # print(pt.data)
+            # break
 
 
 # def closestCentr(prev,docs):

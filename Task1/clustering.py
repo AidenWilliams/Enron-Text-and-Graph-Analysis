@@ -1,5 +1,6 @@
 from random import randint
 import dependancyManager as dm
+from copy import copy, deepcopy
 Vector = list[float]
 
 
@@ -24,11 +25,12 @@ class point:
     
 
     def similarityTo(self,clust) -> float:
-        thisV = clV = []
+        thisV = []
+        clV = []
         for word,weight in self.data.items():
             thisV.append(weight)
-            if word in clust.centroid:
-                clV.append(clust.centroid[word])
+            if word in clust.centroid.data:
+                clV.append(clust.centroid.data[word])
             else:
                 clV.append(0)
 
@@ -38,9 +40,17 @@ class point:
         sims = {}
         for c in clusters:
             sims[c] = self.similarityTo(c)
-        topClust = dict(sorted(sims.items(), key=lambda item: item[1],reverse=True)).keys()[0]
-        self.parentCluster = topClust
-        self.parentCluster.points.append(self)
+        topClust = list(dict(sorted(sims.items(), key=lambda item: item[1],reverse=True)).keys())[0]
+        indx = clusters.index(topClust)
+        # clusters[indx].addPoint(self)
+        # points = topClust.points.copy()
+        # topClust = Cluster(topClust.centroid.copy())
+        # topClust.points = points
+        # top.
+        self.parentCluster = clusters[indx]
+        return indx
+        # self.parentCluster.points.append(self)
+        # self.parentCluster.addPoint(self)
 
 
 class Cluster:
@@ -51,17 +61,34 @@ class Cluster:
         self.centroid = centroid
         # self.points = points
 
+    def __copy__(self):
+        newPtns = []
+        for p in list(self.points):
+            newPtns.append(p)
+        # newPtns.append(pnt)
+        np = Cluster(point(self.centroid.data.copy()))
+        np.points = newPtns
+        return np
+
+    def addPoint(self,pnt):
+        # print('appending')
+        newPtns = []
+        for p in list(self.points):
+            newPtns.append(p)
+        newPtns.append(pnt)
+        self.points = newPtns
+
     def reCalc(self):
         totals = {}
         docCount = len(self.points)
         for p in self.points:
-            for word,weight in p.data:
+            for word,weight in p.data.items():
                 if word not in totals:
                     totals[word] = 0
                 totals[word]+=weight
 
         for t,v in totals.items():
-            self.centroid[t] = v/docCount
+            self.centroid.data[t] = v/docCount
 
 
 class clusterSet:
@@ -70,11 +97,23 @@ class clusterSet:
         self.clusters = clusters
     
     def reCalculateCentroids(self):
+        newClust = []
         for c in self.clusters:
             c.reCalc()
+            newClust.append(c)
+        
+        return clusterSet(newClust)
+
+    def __copy__(self):
+        nc = []
+        for c in list(self.clusters):
+            nc.append(copy(c))
+        return type(self)(nc.copy())
+
 
     def distanceToOtherSet(self,other) -> float:   #IDK WHAT TO DO HERE
-        total = count = 0
+        total = 0
+        count = 0
         for cA,cB in zip(self.clusters,other.clusters):
             cav = list(cA.centroid.data.values())
             cbv = list(cB.centroid.data.values())
@@ -92,7 +131,15 @@ class clusterSet:
             allPts.extend(c.points)
             c.points.clear()
         for p in allPts:
-            p.assignClosest(self.clusters)
+            indx = p.assignClosest(self.clusters)
+            self.clusters[indx].addPoint(p)
+
+    def firstAssignPoints(self,userVecs):
+        # allPts = userDocs
+        for user,vec in userVecs.items():
+            p = point(vec)
+            indx = p.assignClosest(self.clusters)
+            self.clusters[indx].addPoint(p)
             
 
 
@@ -121,38 +168,44 @@ def randomInit(userDocs,k):
     initClusters = []
     for x in init:
         # points = list(list(userDocs.values())[x].values())
-        data = list(userDocs.values())[x]
+        data = list(userDocs.values())[x].copy()
         clst = Cluster(point(data))
         initClusters.append(clst)
     return initClusters
 
 def buildClusters(userDocs, k:int):
-    
+    print('starting')
     lng = len(userDocs)
     if k > lng:
         ValueError("K larger than document count!")
     
     initClusters = randomInit(userDocs,k)
     currClust = clusterSet(initClusters)
+    currClust.firstAssignPoints(userDocs)
     # prevClust = clusterSet
     # s = currClust.distanceToOtherSet(prevClust)
 
     # closest = closestCentr(currClust, userDocs)
+    distances = [-1,-1,-1]
     while True:
         
         currClust.reAssignPoints()
-        prevClust = currClust
-        currClust.reCalculateCentroids()
+        prevClust = copy(currClust)
+        currClust = currClust.reCalculateCentroids()
 
         s = currClust.distanceToOtherSet(prevClust)
 
-        print('\r',s,end='')
-        if s==1:
+        # print('\r',s,end='')
+        print(s)
+        distances.pop(0)
+        distances.append(s)
+
+        if s>=1 or len(set(distances))<=1:
             return currClust
 
 
 dmv = dm.getuvec()
-subkeys = list(dmv.keys())[:10]
+subkeys = list(dmv.keys())[:3000]
 #TODO FILTER DOCS
 subDic = {k: dmv[k] for k in subkeys if k in dmv}
 buildClusters(subDic, 5)

@@ -3,6 +3,7 @@ import json,os,math
 from tqdm import tqdm
 import pickle
 import nltk
+from multiprocessing import Pool, cpu_count
 nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 
@@ -224,7 +225,7 @@ def vectorizeDocs(docs):
     # print()
     return tfidfs
 
-from multiprocessing import Pool
+from multiprocessing import Pool,cpu_count
 def preProcessAll(mailboxes):
     newMailboxes = {}
     for sender, msgs in mailboxes.items():
@@ -234,13 +235,7 @@ def preProcessAll(mailboxes):
                     newMailboxes[sender] = []
                 newMailboxes[sender].append(msg)
 
-    p = Pool(processes=cpu_count // 2)
-    # for sender in tqdm(newMailboxes, desc=f'PreProcessing:'):
-    # p = Pool()
-        
-        # for msg in newMailboxes[sender]:
-        #     msg['text'] = preProcess(msg['text'])
-        # del mailboxes[sender]
+    p = Pool(processes=cpu_count() // 2)
     senders = newMailboxes.keys()
     processed = p.map(preProcessUser, tqdm(newMailboxes.values(),desc='PreProcessing'))
     p.close()
@@ -253,9 +248,8 @@ def preProcessAll(mailboxes):
 def preProcessUser(messages):
     newMSGS = []
     for msg in messages:
-        if msg['tos']:
-            msg['text'] = preProcess(msg['text'])
-            newMSGS.append(msg)
+        msg['text'] = preProcess(msg['text'])
+        newMSGS.append(msg)
     
     # msg['text'] = preProcess(msg['text'])
     # return msg

@@ -53,7 +53,7 @@ def getRawMB():
         return _mb
     # print('MB file not found! Parsing Mailboxes from scratch')
     print('MB was not generated yet! Parsing Mailboxes from scratch')
-    _mb = prs.parseData(root)
+    _mb = prs.loadData(root)
     return _mb
 
 _preproc = None

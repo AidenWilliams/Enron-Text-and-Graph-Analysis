@@ -59,18 +59,43 @@ def topCount():
     return redirect(url_for('userForce'))
 
 
+@app.route('/topEdges', methods=['GET', 'POST'])
+def topEdges():
+    global topEdges
+    global userGraph
+    # print(request.args)
+    topCount = int(request.args.get('count'))
+    links = dm.getLinks()
+    userGraph = getUserGraph(links)
+    return redirect(url_for('userForce'))
+
+
 def formatLinks(lnks,nodes):
     # fmtd = dict.fromkeys(lnks.keys())
     fmtd = []
     added = set()
     nodes = set(nodes)
+    
+    edgeTotals = {}
+    # counts = {}
+    bestEdges = {}
+    for user,contacts in tqdm(lnks.items(),desc='Sorting Edges'):
+        edgeTotals[user] = 0
+        # counts[user] = 0
+        for contact in contacts:
+            edgeTotals[user] += lnks[user][contact]
+            # counts[user]+=1
+
+        sortedEdges = {k: v for k, v in sorted(edgeTotals.items(), key=lambda item: item[1])}
+        bestEdges[user] = set(list(reversed(list(sortedEdges)))[:topEdges])
+    
 
     for user, conn in tqdm(lnks.items(), desc='Formatting Links'):
         for rec in conn:
             if user == rec  or (user, rec) in added or (rec,user) in added:
                 continue
-
-
+            if rec not in bestEdges[user]:
+                continue
             
             source = user.split('@')[0] if '@' in user else user
             nrec = rec.split('@')[0] if '@' in rec else rec
@@ -80,9 +105,9 @@ def formatLinks(lnks,nodes):
 
             added.add((user, rec))
 
-            # x = lnks[user][rec]
+
             value = min(20,lnks[user][rec])
-            # value = 30*1/(1/(1 + np.exp(-x)))
+
             fmtd.append({
                 'source': source,
                 'target': nrec,
@@ -91,7 +116,8 @@ def formatLinks(lnks,nodes):
 
     return {"links":fmtd}
 
-topCount = 100
+topCount = 80
+topEdges = 100
 def topUsers(rawLinks):
     global topCount
     userTotals = {}
@@ -116,6 +142,10 @@ def getUserGraph(rawLinks):
     userGraph.update(links)
     userGraph.update(nodes)
     return userGraph
+
+
+# def topEdges(rawLinks):
+
 
 if __name__ == '__main__':
 

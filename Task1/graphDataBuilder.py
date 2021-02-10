@@ -26,17 +26,3 @@ def getNodes(vUsers):
     return [user.split('@')[0] for user in vUsers.keys()]
 
 
-
-# if __name__ == '__main__':
-    
-    # var = 'subset'
-    # workDir = os.path.join('intermediary', var)
-    # path = os.path.join(workDir, 'vectorizedUsers.json')
-
-    # vectorUsers = dm.loadFromFile(path)
-    # topTerms = topUserTerms(vectorUsers,10)
-
-    # someNames = list(vectorUsers.keys())[:10]
-    # # someName = someNames[:5]
-    # for someName in someNames:
-    #     print(topTerms[someName])

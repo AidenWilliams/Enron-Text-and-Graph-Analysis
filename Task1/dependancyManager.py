@@ -40,10 +40,6 @@ def loadIfCan(func, path, arg=None, toSave=None):
 
 
 
-        
-
-
-
 _mb = None
 def getRawMB():
     global _mb
@@ -115,7 +111,12 @@ def getLinks():
     if os.path.exists(os.path.join(workDir, lp)):
         _links = loadFromFile(os.path.join(workDir, lp))
         return _links
-    _links = loadIfCan(dp.getAllLinks,  'links.pkl', arg=getRawMB())
+
+    ppPath = 'preProcessed.pkl'
+    if os.path.exists(os.path.join(workDir, ppPath)):
+        _links = loadIfCan(dp.getAllLinks,  'links.pkl', arg=getProcMB())
+    else:
+        _links = loadIfCan(dp.getAllLinks,  'links.pkl', arg=getRawMB())
     return _links
 
 

@@ -149,14 +149,13 @@ def get_average_path_length(graph, edges):
     sum = 0
     for distance in paths.values():
         sum += distance
-    #       1
+    #      sum
     # -------------
     # |V|^2 - |V|
-    lG = \
-        1 \
-        / (len(vertices) * len(vertices) - len(vertices))
+    lG = len(vertices) * len(vertices)
+    lG -= len(vertices)
     # return the average path length
-    return float(lG * sum)
+    return sum/lG
 
 
 # graph is the networkx graph

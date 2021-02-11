@@ -122,8 +122,8 @@ def preProcess(doc):
     
     tokens = nltk.tokenize.word_tokenize(doc)  # tokenization
     # tokens = [t.lower() for t in tokens]  # case folding ?
-
-    tokens = [stemmer.stem(t.lower()) for t in tokens if t not in stopWords]  # stop word removal
+    tokens = [t.lower() for t in tokens]
+    tokens = [stemmer.stem(t) for t in tokens if t not in stopWords]  # stop word removal
 
     # tokens = [stemmer.stem(d) for d in tokens]  # stemming
 

@@ -1,0 +1,13 @@
+{
+    "nodes": [
+        {
+            "name": "kevin.olmstead@enron.com",
+            "size": 0
+        },
+        {
+            "name": "christopher.riley@enron.com",
+            "size": 0
+        }
+    ],
+    "links": []
+}

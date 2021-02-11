@@ -215,6 +215,7 @@ def preProcessAll(mailboxes):
 
     p = Pool(processes=cpu_count() // 2)
     senders = newMailboxes.keys()
+    print('Starting to process data, it is normal for this process to seem "stuck" as it weights for all threads to finish')
     processed = p.map(preProcessUser, tqdm(newMailboxes.values(),desc='PreProcessing'))
     p.close()
     p.join()

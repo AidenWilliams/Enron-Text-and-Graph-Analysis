@@ -23,10 +23,8 @@ def usGraphDa():
 
 @app.route('/userCloudData', methods=['GET'])
 def userCloudData():
-    # value = [{ 'word': "Running", 'size': "69" }, { 'word': "Surfing", 'size': "20" }, { 'word': "Climbing", 'size': "50" }, { 'word': "Kiting", 'size': "30" },{ 'word': "Sailing", 'size': "20" }, { 'word': "Snowboarding", 'size': "60" }]
     user = request.args.get('user')
     userTerms = topTerms.get(user)
-    # print('returning',value)
 
     wordList = []
     for key, value in userTerms.items():
@@ -71,72 +69,36 @@ def topEdgesCount():
     return redirect(url_for('userForce'))
 
 
-def formatLinks(lnks,nodes):
-    # fmtd = dict.fromkeys(lnks.keys())
-    fmtd = []
-    added = set()
-    nodes = set(nodes)
-    
 
-    # counts = {}
-    cutoff = {}
-    edgeTotals = {}
-    for user,contacts in lnks.items():
-        edgeTotals[user] = 0
-        for contact in contacts:
-            edgeTotals[user] += lnks[user][contact]
-
-        # cutoff[user] = topEdges/100*edgeTotals
-    
-
-    for user, conn in tqdm(lnks.items(), desc='Formatting Links'):
-        # prevLen = len(conn)
-        if topEdges!=100:
-            cutoff = int(topEdges/100*len(conn))
-            conn = dict(sorted(conn.items(), key=lambda x: x[1], reverse=True)[:cutoff])
-       
-        for rec in conn:
-            if user == rec  or (user, rec) in added or (rec,user) in added:
-                continue
-            
-            
-            source = user.split('@')[0] if '@' in user else user
-            nrec = rec.split('@')[0] if '@' in rec else rec
-
-            if source not in nodes or nrec not in nodes:
-                continue
-
-            added.add((user, rec))
-
-            value = min(20,lnks[user][rec])
-
-            fmtd.append({
-                'source': source,
-                'target': nrec,
-                'value': value//5
-                })
-
-    return {"links":fmtd}
 
 topCount = 80
 topEdges = 100
-def topUsers(rawLinks):
+def topUsers(rawLinks,tc = None,chop=True):
     global topCount
+    count = topCount
+    if tc is not None:
+        count = tc
+
+
     userTotals = {}
     for user, others in rawLinks.items():
         total = sum(others.values())
         userTotals[user] = total
 
     sortedUsers = {k: v for k, v in sorted(userTotals.items(), key=lambda item: item[1])}
-    topUsers = list(reversed(list(sortedUsers)))[:topCount]
-    nodes = [user.split('@')[0] for user in topUsers]
+    topUsers = list(reversed(list(sortedUsers)))[:count]
+
+    if chop:
+        nodes = [user.split('@')[0] for user in topUsers]
+    else:
+        nodes = topUsers
     return nodes
 
 
 def getUserGraph(rawLinks):
 
     topNodes = topUsers(rawLinks)
-    links = formatLinks(rawLinks, topNodes)
+    links = gdb.formatLinks(rawLinks, topNodes,topEdges)
 
     nodes = {'nodes': [{'id': name} for name in topNodes]}
 

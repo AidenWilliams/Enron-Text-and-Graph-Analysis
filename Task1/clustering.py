@@ -1,6 +1,8 @@
 from random import randint
 import dependancyManager as dm
-from copy import copy, deepcopy
+from copy import copy
+import webService as ws
+
 Vector = list[float]
 
 
@@ -179,7 +181,7 @@ def randomInit(userDocs,k):
     return initClusters
 
 def buildClusters(userDocs, k:int):
-    print('starting')
+    print('starting cluster')
     lng = len(userDocs)
     if k > lng:
         ValueError("K larger than document count!")
@@ -200,31 +202,50 @@ def buildClusters(userDocs, k:int):
         
         distances.pop(0)
         distances.append(s)
-        print(distances)
+        print(distances[-1])
 
         if s>=1 or len(set(distances))<=1:
             return currClust
 
 
-dmv = dm.getuvec()
-subkeys = list(dmv.keys())[:300]
-#TODO FILTER DOCS
-subDic = {k: dmv[k] for k in subkeys if k in dmv}
-clusters = buildClusters(subDic, 20).clusters
+def cluster(k=20,userCount=6000):
+    uvec = dm.getuvec()
+    links = dm.getLinks()
+    subkeys = ws.topUsers(links,tc=userCount,chop=False)
+
+    subDic = {key: uvec[key] for key in subkeys if key in uvec}
+    print(f'clustering {len(subDic)} users into {k} classes')
+    clusters = buildClusters(subDic, k).clusters
+    return clusters
 
 
-matching = 0
-count = 0
-for cl in clusters:
-    if len(cl.points)>1:
-        for pt in cl.points:
-            for pt2 in cl.points:
-                if pt == pt2:
-                    continue
-                for key in pt.data:
-                    count+=1
-                    if key in pt2.data:
-                        matching+=1
-        break
+def getData(k=20, userCount=6000):
+    
+    lengs = {}
+    words = {}
+    for c in cluster(k,userCount):
+        lengs[c] = len(c.points)
+        words[c] = c.centroid.data
+    print(lengs)
 
-print(f'matching: {matching} | %: {matching/count}')
+    data = {'lens':lengs,'words':words}
+
+
+print(getData())
+
+
+# matching = 0
+# count = 0
+# for cl in clusters:
+#     if len(cl.points)>1:
+#         for pt in cl.points:
+#             for pt2 in cl.points:
+#                 if pt == pt2:
+#                     continue
+#                 for key in pt.data:
+#                     count+=1
+#                     if key in pt2.data:
+#                         matching+=1
+#         break
+
+# print(f'matching: {matching} | %: {matching/count}')

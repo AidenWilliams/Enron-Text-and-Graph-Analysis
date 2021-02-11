@@ -1,531 +1,425 @@
 {
     "nodes": [
         {
-            "name": "0",
-            "size": 16
+            "name": "aia.service@telebuild.com",
+            "size": 0
         },
         {
-            "name": "1",
-            "size": 9
+            "name": "elliott.greg@enron.com",
+            "size": 0
         },
         {
-            "name": "2",
-            "size": 10
+            "name": "veronica.thompson@enron.com",
+            "size": 0
         },
         {
-            "name": "3",
-            "size": 6
+            "name": "amber.hamby@enron.com",
+            "size": 0
         },
         {
-            "name": "4",
-            "size": 3
+            "name": "warhorse@cyberport.com",
+            "size": 0
         },
         {
-            "name": "5",
-            "size": 4
+            "name": "burns@enron.com",
+            "size": 0
         },
         {
-            "name": "6",
-            "size": 4
+            "name": "lwilkinson@cdnam.com",
+            "size": 0
         },
         {
-            "name": "7",
-            "size": 4
+            "name": "jlamprecht@ev1.net",
+            "size": 0
         },
         {
-            "name": "8",
-            "size": 5
+            "name": "enrique.velasco@enron.com",
+            "size": 0
         },
         {
-            "name": "9",
+            "name": "mary.grif.gray@enron.com",
+            "size": 0
+        },
+        {
+            "name": "gbennett@ccng-inc.com",
+            "size": 0
+        },
+        {
+            "name": "chris.morton@enron.com",
+            "size": 0
+        },
+        {
+            "name": "kaseynash@kpmg.com",
+            "size": 0
+        },
+        {
+            "name": "karen.marshall@enron.com",
             "size": 2
         },
         {
-            "name": "10",
-            "size": 3
+            "name": "frank_m.astrodome_po.hw_email@houworks.com",
+            "size": 0
         },
         {
-            "name": "11",
-            "size": 1
+            "name": "kathyb@gladstone.uoregon.edu",
+            "size": 0
         },
         {
-            "name": "12",
+            "name": "hots@chevron.com",
+            "size": 0
+        },
+        {
+            "name": "al3v@andrew.cmu.edu",
+            "size": 0
+        },
+        {
+            "name": "debra.johnson@enron.com",
+            "size": 0
+        },
+        {
+            "name": "shawn.anderson@enron.com",
+            "size": 0
+        },
+        {
+            "name": "lykos@enron.com",
+            "size": 0
+        },
+        {
+            "name": "jfolk@hmtf.com",
+            "size": 0
+        },
+        {
+            "name": "chad_wetmore@hotmail.com",
+            "size": 0
+        },
+        {
+            "name": "melissa.thomas@enron.com",
+            "size": 0
+        },
+        {
+            "name": "goh@enron.com",
+            "size": 0
+        },
+        {
+            "name": "twana.lee@enron.com",
+            "size": 0
+        },
+        {
+            "name": "telle@enron.com",
+            "size": 0
+        },
+        {
+            "name": "maria.tefel@enron.com",
+            "size": 0
+        },
+        {
+            "name": "jarmogi@enron.com",
+            "size": 0
+        },
+        {
+            "name": "robert.johnson@enron.com",
             "size": 2
         },
         {
-            "name": "13",
-            "size": 5
+            "name": "sargasso741@coolemail.com",
+            "size": 0
         },
         {
-            "name": "14",
+            "name": "stephen.hands@enron.com",
+            "size": 0
+        },
+        {
+            "name": "s..pollan@enron.com",
+            "size": 0
+        },
+        {
+            "name": "nicknijt@bp.com",
+            "size": 0
+        },
+        {
+            "name": "shawna.meyer@enron.com",
+            "size": 0
+        },
+        {
+            "name": "elizabeth.johnston@enron.com",
+            "size": 0
+        },
+        {
+            "name": "walt@waltercunningham.com",
+            "size": 0
+        },
+        {
+            "name": "gmiller@flash.net",
+            "size": 0
+        },
+        {
+            "name": "timothyt@coweblink.net",
+            "size": 0
+        },
+        {
+            "name": "for1205@aol.com",
+            "size": 0
+        },
+        {
+            "name": "charm@charmwoven.com",
+            "size": 0
+        },
+        {
+            "name": "bishop.k.@enron.com",
+            "size": 0
+        },
+        {
+            "name": "ik@cpw.math.columbia.edu",
+            "size": 0
+        },
+        {
+            "name": "dlocascio@bracepatt.com",
+            "size": 0
+        },
+        {
+            "name": "jdolan@ci.glendale.ca.us",
+            "size": 0
+        },
+        {
+            "name": "eric.booth@enron.com",
+            "size": 0
+        },
+        {
+            "name": "stephen.meade@gbucs.com",
             "size": 2
         },
         {
-            "name": "15",
+            "name": "abeck@velaw.com",
+            "size": 0
+        },
+        {
+            "name": "netsaavers@info.aa.com",
+            "size": 0
+        },
+        {
+            "name": "murthy.rao@enron.com",
+            "size": 0
+        },
+        {
+            "name": "steven.merris@enron.com",
+            "size": 0
+        },
+        {
+            "name": "kristina.c.clark-1@ou.edu",
+            "size": 0
+        },
+        {
+            "name": "ltrombero@aol.com",
+            "size": 0
+        },
+        {
+            "name": "tim.whorton@enron.com",
+            "size": 0
+        },
+        {
+            "name": "home.larry@enron.com",
+            "size": 0
+        },
+        {
+            "name": "lisa.still@enron.com",
+            "size": 0
+        },
+        {
+            "name": "omaha.helpdesk@enron.com",
+            "size": 0
+        },
+        {
+            "name": "rachel.massey@enron.com",
+            "size": 0
+        },
+        {
+            "name": "jimo@nepco.com",
+            "size": 0
+        },
+        {
+            "name": "abbykarlsen@yahoo.com",
+            "size": 0
+        },
+        {
+            "name": "e-mail<.rlavigne@enron.com>",
+            "size": 0
+        },
+        {
+            "name": "wan.pamela@enron.com",
+            "size": 0
+        },
+        {
+            "name": "mweaver@txcyber.com",
+            "size": 0
+        },
+        {
+            "name": "anastasia.aourik@enron.com",
+            "size": 0
+        },
+        {
+            "name": "mcgovernw@sec.gov",
+            "size": 0
+        },
+        {
+            "name": "team.spearman@enron.com",
+            "size": 0
+        },
+        {
+            "name": "cmefbkk@aol.com",
+            "size": 0
+        },
+        {
+            "name": "wade.koteras@enron.com",
+            "size": 0
+        },
+        {
+            "name": "cbowman@carolina.rr.com",
+            "size": 0
+        },
+        {
+            "name": "ccrawford@enron.com",
+            "size": 0
+        },
+        {
+            "name": "harrington.john@enron.com",
+            "size": 0
+        },
+        {
+            "name": "ted.murphy@enron.com",
             "size": 2
         },
         {
-            "name": "16",
-            "size": 2
+            "name": "frank.neruda@msdw.com",
+            "size": 0
         },
         {
-            "name": "17",
-            "size": 2
+            "name": "benson.rob@enron.com",
+            "size": 0
         },
         {
-            "name": "18",
-            "size": 2
+            "name": "roninhorn@aol.com",
+            "size": 0
         },
         {
-            "name": "19",
-            "size": 3
+            "name": "karen_davis@enron.com",
+            "size": 0
         },
         {
-            "name": "20",
-            "size": 2
+            "name": "courtney.pistorius@alcoa.com",
+            "size": 0
         },
         {
-            "name": "21",
-            "size": 2
+            "name": "dennis_dye@hotmail.com",
+            "size": 0
         },
         {
-            "name": "22",
-            "size": 2
+            "name": "bryan@stagelight.com",
+            "size": 0
         },
         {
-            "name": "23",
-            "size": 5
+            "name": "rro@onstead.com",
+            "size": 0
         },
         {
-            "name": "24",
-            "size": 3
+            "name": "maki'.'sean@enron.com",
+            "size": 0
         },
         {
-            "name": "25",
-            "size": 3
+            "name": "larry@bozart.com",
+            "size": 0
         },
         {
-            "name": "26",
-            "size": 2
+            "name": "scharnberger-armin@t-online.de",
+            "size": 0
         },
         {
-            "name": "27",
-            "size": 4
+            "name": "epsa@mindspring.com",
+            "size": 0
         },
         {
-            "name": "28",
-            "size": 3
+            "name": "mittermayr@juno.com",
+            "size": 0
         },
         {
-            "name": "29",
-            "size": 4
+            "name": "nicole_cleneay@hotmail.com",
+            "size": 0
         },
         {
-            "name": "30",
-            "size": 4
+            "name": "fred.radvansky@enron.com",
+            "size": 0
         },
         {
-            "name": "31",
-            "size": 6
+            "name": "mflaman@tcel.com",
+            "size": 0
         },
         {
-            "name": "32",
-            "size": 12
+            "name": "tracyamichel@msn.com",
+            "size": 0
         },
         {
-            "name": "33",
-            "size": 17
+            "name": "ebbrauer@prodigy.net",
+            "size": 0
+        },
+        {
+            "name": "abbeysmather@sempra.com",
+            "size": 0
+        },
+        {
+            "name": "rcossick@houstontech.org",
+            "size": 0
+        },
+        {
+            "name": "enerfaxenergy@modernmediaohio.com",
+            "size": 0
+        },
+        {
+            "name": "dsgould@midwest.net",
+            "size": 0
+        },
+        {
+            "name": "weyman.cheri@enron.com",
+            "size": 0
+        },
+        {
+            "name": "philip.golden@enron.com",
+            "size": 0
+        },
+        {
+            "name": "jim_parmelee@rmiinc.com",
+            "size": 0
+        },
+        {
+            "name": "ccidata@comcntr.com",
+            "size": 0
+        },
+        {
+            "name": "matt.pagano@enron.com",
+            "size": 0
+        },
+        {
+            "name": "schneider.kelly@enron.com",
+            "size": 0
         }
     ],
     "links": [
         {
-            "source": 0,
-            "target": 1,
+            "source": "karen.marshall@enron.com",
+            "target": "karen.marshall@enron.com",
             "weight": 1
         },
         {
-            "source": 0,
-            "target": 2,
+            "source": "robert.johnson@enron.com",
+            "target": "robert.johnson@enron.com",
             "weight": 1
         },
         {
-            "source": 0,
-            "target": 3,
+            "source": "stephen.meade@gbucs.com",
+            "target": "stephen.meade@gbucs.com",
             "weight": 1
         },
         {
-            "source": 0,
-            "target": 4,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 5,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 6,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 7,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 8,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 10,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 11,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 12,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 13,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 17,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 19,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 21,
-            "weight": 1
-        },
-        {
-            "source": 0,
-            "target": 31,
-            "weight": 1
-        },
-        {
-            "source": 1,
-            "target": 2,
-            "weight": 1
-        },
-        {
-            "source": 1,
-            "target": 3,
-            "weight": 1
-        },
-        {
-            "source": 1,
-            "target": 7,
-            "weight": 1
-        },
-        {
-            "source": 1,
-            "target": 13,
-            "weight": 1
-        },
-        {
-            "source": 1,
-            "target": 17,
-            "weight": 1
-        },
-        {
-            "source": 1,
-            "target": 19,
-            "weight": 1
-        },
-        {
-            "source": 1,
-            "target": 21,
-            "weight": 1
-        },
-        {
-            "source": 1,
-            "target": 30,
-            "weight": 1
-        },
-        {
-            "source": 2,
-            "target": 3,
-            "weight": 1
-        },
-        {
-            "source": 2,
-            "target": 7,
-            "weight": 1
-        },
-        {
-            "source": 2,
-            "target": 8,
-            "weight": 1
-        },
-        {
-            "source": 2,
-            "target": 9,
-            "weight": 1
-        },
-        {
-            "source": 2,
-            "target": 13,
-            "weight": 1
-        },
-        {
-            "source": 2,
-            "target": 27,
-            "weight": 1
-        },
-        {
-            "source": 2,
-            "target": 28,
-            "weight": 1
-        },
-        {
-            "source": 2,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 3,
-            "target": 7,
-            "weight": 1
-        },
-        {
-            "source": 3,
-            "target": 12,
-            "weight": 1
-        },
-        {
-            "source": 3,
-            "target": 13,
-            "weight": 1
-        },
-        {
-            "source": 4,
-            "target": 6,
-            "weight": 1
-        },
-        {
-            "source": 4,
-            "target": 10,
-            "weight": 1
-        },
-        {
-            "source": 5,
-            "target": 6,
-            "weight": 1
-        },
-        {
-            "source": 5,
-            "target": 10,
-            "weight": 1
-        },
-        {
-            "source": 5,
-            "target": 16,
-            "weight": 1
-        },
-        {
-            "source": 6,
-            "target": 16,
-            "weight": 1
-        },
-        {
-            "source": 8,
-            "target": 30,
-            "weight": 1
-        },
-        {
-            "source": 8,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 8,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 9,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 13,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 14,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 14,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 15,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 15,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 18,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 18,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 19,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 20,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 20,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 22,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 22,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 23,
-            "target": 25,
-            "weight": 1
-        },
-        {
-            "source": 23,
-            "target": 27,
-            "weight": 1
-        },
-        {
-            "source": 23,
-            "target": 29,
-            "weight": 1
-        },
-        {
-            "source": 23,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 23,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 24,
-            "target": 25,
-            "weight": 1
-        },
-        {
-            "source": 24,
-            "target": 27,
-            "weight": 1
-        },
-        {
-            "source": 24,
-            "target": 31,
-            "weight": 1
-        },
-        {
-            "source": 25,
-            "target": 31,
-            "weight": 1
-        },
-        {
-            "source": 26,
-            "target": 29,
-            "weight": 1
-        },
-        {
-            "source": 26,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 27,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 28,
-            "target": 31,
-            "weight": 1
-        },
-        {
-            "source": 28,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 29,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 29,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 30,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 30,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 31,
-            "target": 32,
-            "weight": 1
-        },
-        {
-            "source": 31,
-            "target": 33,
-            "weight": 1
-        },
-        {
-            "source": 32,
-            "target": 33,
+            "source": "ted.murphy@enron.com",
+            "target": "ted.murphy@enron.com",
             "weight": 1
         }
     ]

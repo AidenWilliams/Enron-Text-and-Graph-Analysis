@@ -156,4 +156,5 @@ if __name__ == '__main__':
 
     vectorUsers = dm.getuvec()
     topTerms = gdb.topUserTerms(vectorUsers, 20)
-    app.run(host='0.0.0.0',port=6969)
+    # app.run(host='0.0.0.0',port=5000)
+    app.run()

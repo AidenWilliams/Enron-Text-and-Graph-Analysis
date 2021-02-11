@@ -2,6 +2,7 @@ from random import randint
 import dependancyManager as dm
 from copy import copy
 import webService as ws
+import io,csv
 
 Vector = list[float]
 
@@ -204,7 +205,7 @@ def buildClusters(userDocs, k:int):
         distances.append(s)
         print(distances[-1])
 
-        if s>=1 or len(set(distances))<=1:
+        if s>=0.999 or len(set(distances))<=1:
             return currClust
 
 
@@ -219,19 +220,34 @@ def cluster(k=20,userCount=6000):
     return clusters
 
 
-def getData(k=20, userCount=6000):
+def getData(k=20, userCount=4000):
     
-    lengs = {}
-    words = {}
+    i = 0;
     for c in cluster(k,userCount):
-        lengs[c] = len(c.points)
-        words[c] = c.centroid.data
-    print(lengs)
+        i+=1
+        data= []
+        size =  len(c.points)
+        data.append({'id': i, 'size': size, 'groupid': 1})
+        print('data is: ',data[-1])
 
-    data = {'lens':lengs,'words':words}
+    return data
 
 
-print(getData())
+def toCSV(data):
+    dest = io.StringIO()
+    keys = data[0].keys()
+    print('keys:',keys)
+    dict_writer = csv.DictWriter(dest, keys)
+    dict_writer.writeheader()
+    dict_writer.writerows(data)
+
+    dest.seek(0)
+    return dest.read()
+
+
+print('final:', toCSV(getData(k=1, userCount=10)))
+
+# print(getData())
 
 
 # matching = 0

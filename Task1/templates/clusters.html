@@ -12,6 +12,54 @@
 </style>
 </head>
 
+
+<style>
+    input {
+        background-color: rgba(0, 0, 0, 0) !important;
+        /* border: none !important; */
+    }
+
+    body {
+        height: 50vw;
+        width: 100vw;
+        overflow: hidden;
+    }
+</style>
+<p>Changing these values may take a long time, website may seem offline whilst processing, kindly check the console for updates</p>
+<div class="row g-2 align-items-center" autocomplete="off"></div>
+<div class="position-fixed">
+    <form action='/clusterCount' method='GET'>
+
+        <div class="col-sm">
+            <label for="count" class="col-form-label">K clusters</label>
+        </div>
+        <div class="col-auto">
+            <input placeholder="Current: {{kcount}} Cluster" type="number" id="count" class="form-control" name="count"
+                autocomplete="off" max="{{ucount}}">
+        </div>
+
+    </form>
+
+    <form action='/userClusterCount' method='GET' autocomplete="off">
+        <!-- <div class="row g-2 align-items-center"> -->
+        <div class="col-sm">
+            <label for="count" class="col-form-label">Users To cluster</label>
+        </div>
+        <div class="col-sm">
+            <input placeholder="Current: {{ucount}} users" type="number" id="count" class="form-control" name="count"
+                autocomplete="off" min="{{kcount}}">
+        </div>
+        <!-- <div class="col-auto"><button type="submit" class="btn btn-default">Submit</button></div> -->
+        <!-- <div class="col-auto">
+            <p>Current: {{ecount}}%</p>
+        </div> -->
+
+        <!-- </div> -->
+    </form>
+</div>
+</div>
+
+
 <body>
     <div id='vis'></div>
 
@@ -147,7 +195,8 @@
 
         // load data
         // d3.csv('/nodes-data.csv').then(display);
-        d3.csv("./{{ url_for('static', filename = 'nodes-data.csv') }}").then(display);
+        // d3.csv("./{{ url_for('static', filename = 'nodes-data.csv') }}").then(display);
+        d3.csv("./clusterGraphData").then(display);
 
     </script>
 

@@ -5,6 +5,7 @@ from flask import render_template,jsonify,request,redirect,url_for
 
 import graphDataBuilder as gdb
 import dependancyManager as dm
+import clustering as cl
 
 import mimetypes
 mimetypes.add_type('application/javascript', '.mjs')
@@ -21,6 +22,7 @@ def home():
 def usGraphDa():
     return jsonify(userGraph)
 
+
 @app.route('/userCloudData', methods=['GET'])
 def userCloudData():
     user = request.args.get('user')
@@ -30,6 +32,13 @@ def userCloudData():
     for key, value in userTerms.items():
         wordList.append({'word':key,'size':value})
     return jsonify(wordList)
+
+
+@app.route('/clusterGraphData', methods=['GET'])
+def clusterGraph():
+    print(clusterData)
+    return clusterData
+
 
 @app.route('/cloud', methods=['GET'])
 def ug():
@@ -44,7 +53,7 @@ def userForce():
 
 @app.route('/clusters', methods=['GET'])
 def clusters():
-    return render_template("Clusters.html")
+    return render_template("Clusters.html",kcount=clusterCount,ucount=usersToCluster)
 
 
 @app.route('/topCount', methods=['GET','POST'])
@@ -69,10 +78,24 @@ def topEdgesCount():
     return redirect(url_for('userForce'))
 
 
+@app.route('/clusterCount', methods=['GET', 'POST'])
+def cluserCount():
+    global clusterCount
+    
+    clusterCount = int(request.args.get('count'))
+    reCluster()
+    return redirect(url_for('clusters'))
 
 
-topCount = 80
-topEdges = 100
+@app.route('/userClusterCount', methods=['GET', 'POST'])
+def userCluster():
+    global usersToCluster
+    usersToCluster = int(request.args.get('count'))
+    reCluster()
+    return redirect(url_for('clusters'))
+
+
+
 def topUsers(rawLinks,tc = None,chop=True):
     global topCount
     count = topCount
@@ -110,14 +133,29 @@ def getUserGraph(rawLinks):
 
 # def topEdges(rawLinks):
 
+def reCluster():
+    global clusterData
+    # print('clister count',clusterCount)
+    # print('uysers clust count',usersToCluster)
+    clusterData = cl.toCSV(cl.getData(
+        k=clusterCount, userCount=usersToCluster))
 
 if __name__ == '__main__':    
-    app.config["DEBUG"] = False
+    
+    topCount = 80
+    topEdges = 100
+    clusterCount = 5
+    usersToCluster = 3000
+
+
+    app.config["DEBUG"] = True
 
     links = dm.getLinks()
     userGraph = getUserGraph(links)
 
     vectorUsers = dm.getuvec()
     topTerms = gdb.topUserTerms(vectorUsers, 20)
+
+    clusterData = cl.toCSV(cl.getData(k=clusterCount,userCount=usersToCluster))
     # app.run(host='0.0.0.0',port=5000)
     app.run()

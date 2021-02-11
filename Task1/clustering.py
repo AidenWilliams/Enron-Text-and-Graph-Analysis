@@ -182,10 +182,11 @@ def randomInit(userDocs,k):
     return initClusters
 
 def buildClusters(userDocs, k:int):
-    print('starting cluster')
+    print('starting clustering')
     lng = len(userDocs)
     if k > lng:
-        ValueError("K larger than document count!")
+        raise ValueError("K larger than document count!")
+        
     
     initClusters = randomInit(userDocs,k)
     currClust = clusterSet(initClusters)
@@ -203,9 +204,10 @@ def buildClusters(userDocs, k:int):
         
         distances.pop(0)
         distances.append(s)
-        print(distances[-1])
+        print('\r',distances[-1],end='')
 
         if s>=0.999 or len(set(distances))<=1:
+            print()
             return currClust
 
 
@@ -223,12 +225,15 @@ def cluster(k=20,userCount=6000):
 def getData(k=20, userCount=4000):
     
     i = 0;
+    data = []
     for c in cluster(k,userCount):
-        i+=1
-        data= []
+        i+=1        
         size =  len(c.points)
+        if size == 2:
+            for p in c.points:
+                print(p.data.keys())
         data.append({'id': i, 'size': size, 'groupid': 1})
-        print('data is: ',data[-1])
+        # print('data is: ',data[-1])
 
     return data
 
@@ -236,8 +241,8 @@ def getData(k=20, userCount=4000):
 def toCSV(data):
     dest = io.StringIO()
     keys = data[0].keys()
-    print('keys:',keys)
-    dict_writer = csv.DictWriter(dest, keys)
+    # print('keys:',keys)
+    dict_writer = csv.DictWriter(dest, keys,delimiter=',',lineterminator='\n')
     dict_writer.writeheader()
     dict_writer.writerows(data)
 
@@ -245,10 +250,7 @@ def toCSV(data):
     return dest.read()
 
 
-print('final:', toCSV(getData(k=1, userCount=10)))
-
-# print(getData())
-
+# print('final:', toCSV(getData(k=1, userCount=10)))
 
 # matching = 0
 # count = 0

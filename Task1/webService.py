@@ -36,7 +36,7 @@ def userCloudData():
 
 @app.route('/clusterGraphData', methods=['GET'])
 def clusterGraph():
-    # print(clusterDataCsv)
+    print(clusterDataCsv)
     return clusterDataCsv
 
 
@@ -165,7 +165,7 @@ if __name__ == '__main__':
     topCount = 80
     topEdges = 100
     clusterCount = 20
-    usersToCluster = 200
+    usersToCluster = 150
     topNPercentWords = 20
 
     app.config["DEBUG"] = True

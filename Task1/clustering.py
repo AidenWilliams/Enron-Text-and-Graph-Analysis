@@ -48,10 +48,12 @@ class point:
         for c in clusters:
             sims[c] = self.similarityTo(c)
         topClust = list(dict(sorted(sims.items(), key=lambda item: item[1],reverse=True)).keys())[0]
-        indx = clusters.index(topClust)
+        # indx = clusters.index(topClust)
         # top.
-        self.parentCluster = clusters[indx]
-        return indx
+        # self.parentCluster = clusters[indx]
+        self.parentCluster = topClust
+        self.parentCluster.addPoint(self)
+        # return self.parentCluster
 
 
 
@@ -68,17 +70,20 @@ class Cluster:
         for p in list(self.points):
             newPtns.append(p)
         # newPtns.append(pnt)
-        np = Cluster(point(self.centroid.data.copy()))
+        np = Cluster(point(self.centroid.data))
         np.points = newPtns
         return np
 
     def addPoint(self,pnt):
         # print('appending')
-        newPtns = []
-        for p in list(self.points):
-            newPtns.append(p)
+        newPtns = self.points.copy()
+        # for p in list(self.points):
+        #     newPtns.append(p)
         newPtns.append(pnt)
         self.points = newPtns
+        # self.points = self.points.append(pnt)
+        # newPoint = point(pnt.data,user=pnt.username)
+        # self.points.append(newPoint)
 
     def reCalc(self):
         totals = {}
@@ -130,15 +135,16 @@ class clusterSet:
             allPts.extend(c.points)
             c.points.clear()
         for p in allPts:
-            indx = p.assignClosest(self.clusters)
-            self.clusters[indx].addPoint(p)
+            p.assignClosest(self.clusters)
+            # self.clusters[indx].addPoint(p)
 
     def firstAssignPoints(self,userVecs):
         # allPts = userDocs
         for userN,vec in tqdm(userVecs.items(),desc='Assgning points'):
             p = point(vec, user=userN)
-            indx = p.assignClosest(self.clusters)
-            self.clusters[indx].addPoint(p)
+            # indx = p.assignClosest(self.clusters)
+            p.assignClosest(self.clusters)
+            # self.clusters[indx].addPoint(p)
 
 
 def randomInit(userDocs,k):
@@ -153,7 +159,7 @@ def randomInit(userDocs,k):
     initClusters = []
     for x in init:
         # points = list(list(userDocs.values())[x].values())
-        data = list(userDocs.values())[x].copy()
+        data = list(userDocs.values())[x]
         clst = Cluster(point(data))
         initClusters.append(clst)
     return initClusters

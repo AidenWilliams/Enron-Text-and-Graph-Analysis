@@ -198,7 +198,7 @@ def vectorizeDocs(docs):
 
     idf = _IDF(weights)
 
-    for ke, w in tqdm(weights.items(), desc='TFIDF'):
+    for key, w in tqdm(weights.items(), desc='TFIDF'):
         tfidfs[key] = _TFIDF(_TF(w), idf)
 
     return tfidfs
@@ -264,7 +264,9 @@ def vectorizeUsers(data):
     for users, doc in tqdm(vDocs.items(),desc='Weighting User Terms'):
         A = users[0]
         B = users[1]
-        if users not in vCounts:
+        if A == "susan.mara@enron.com" or B == "susan.mara@enron.com":
+            print('here')
+        if A not in vCounts or B not in vCounts:
             vCounts[A] = {}
             vTotals[A] = {}
             vCounts[B] = {}

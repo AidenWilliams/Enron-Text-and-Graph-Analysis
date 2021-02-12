@@ -2,8 +2,8 @@ import pickle,os,json
 import eparser as prs
 import docProcessor as dp
 
-# mode = 'maildir'
-mode = 'subset'
+mode = 'maildir'
+# mode = 'subset'
 
 root = os.path.join('data', mode)
 

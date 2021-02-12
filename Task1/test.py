@@ -1,36 +1,43 @@
 import dependancyManager as dm
 from tqdm import tqdm
 
-dm.jsonDump(dm.getProcMB())
-vdc = dm.getVDocs()
+# dm.jsonDump(dm.getProcMB())
+dm.jsonDump(dm.getuvec())
+
+
+# vdc = dm.getVDocs()
 # docs = dm.getDocs()
 userVectors = dm.getuvec()
 
 
 
-a = 'k..allen@enron.com'
-b = 'john.arnold@enron.com'
+# a = 'k..allen@enron.com'
+# b = 'john.arnold@enron.com'
+a = 'susan.mara@enron.com'
+b = 'richard.shapiro@enron.com'
 
-count = 0
-keys = []
-adict = userVectors[a]
-for key, val in userVectors.items():
-    if val == userVectors[a] and key != a:
-        count+=1
-        keys.append(key)
+print(userVectors[b].keys())
 
-print(keys)
-print(count)
+# count = 0
+# keys = []
+# adict = userVectors[a]
+# for key, val in userVectors.items():
+#     if val == userVectors[a] and key != a:
+#         count+=1
+#         keys.append(key)
+
+# print(keys)
+# print(count)
 
 
-filteredDocs = {}
-for docK,doc in vdc.items():
-    for key in keys:
-        if key in docK:
-            for otherKeys in keys:
-                if otherKeys !=key and  otherKeys not in docK:
-                    added = docK[0]+docK[1]
-                    filteredDocs[added] = vdc[docK]
+# filteredDocs = {}
+# for docK,doc in vdc.items():
+#     for key in keys:
+#         if key in docK:
+#             for otherKeys in keys:
+#                 if otherKeys !=key and  otherKeys not in docK:
+#                     added = docK[0]+docK[1]
+#                     filteredDocs[added] = vdc[docK]
 
 # dm.jsonDump(filteredDocs)
 

@@ -138,18 +138,6 @@ class clusterSet:
             p = point(vec, user=userN)
             indx = p.assignClosest(self.clusters)
             self.clusters[indx].addPoint(p)
-            
-
-
-
-
-# here we will minimise the amount of nodes to calm things down for the clustering!
-def filterDocs(userVecs):
-    totals = {}
-    for user,vec in userVecs.items():
-        if user not in totals:
-            totals[user] = 0
-        totals[user] +=vec
 
 
 def randomInit(userDocs,k):

@@ -198,7 +198,7 @@ def vectorizeDocs(docs):
 
     idf = _IDF(weights)
 
-    for key, w in tqdm(weights.items(), desc='TFIDF'):
+    for ke, w in tqdm(weights.items(), desc='TFIDF'):
         tfidfs[key] = _TFIDF(_TF(w), idf)
 
     return tfidfs

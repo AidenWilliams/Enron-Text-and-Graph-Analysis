@@ -1,22 +1,22 @@
-import dependancyManager as dm
-from tqdm import tqdm
+# import dependancyManager as dm
+# from tqdm import tqdm
 
-# dm.jsonDump(dm.getProcMB())
-dm.jsonDump(dm.getuvec())
-
-
-# vdc = dm.getVDocs()
-# docs = dm.getDocs()
-userVectors = dm.getuvec()
+# # dm.jsonDump(dm.getProcMB())
+# dm.jsonDump(dm.getuvec())
 
 
+# # vdc = dm.getVDocs()
+# # docs = dm.getDocs()
+# userVectors = dm.getuvec()
 
-# a = 'k..allen@enron.com'
-# b = 'john.arnold@enron.com'
-a = 'susan.mara@enron.com'
-b = 'richard.shapiro@enron.com'
 
-print(userVectors[b].keys())
+
+# # a = 'k..allen@enron.com'
+# # b = 'john.arnold@enron.com'
+# a = 'susan.mara@enron.com'
+# b = 'richard.shapiro@enron.com'
+
+# print(userVectors[b].keys())
 
 # count = 0
 # keys = []

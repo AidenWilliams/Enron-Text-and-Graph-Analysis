@@ -266,9 +266,10 @@ def vectorizeUsers(data):
         B = users[1]
         if A == "susan.mara@enron.com" or B == "susan.mara@enron.com":
             print('here')
-        if A not in vCounts or B not in vCounts:
+        if A not in vCounts:
             vCounts[A] = {}
             vTotals[A] = {}
+        if B not in vCounts:
             vCounts[B] = {}
             vTotals[B] = {}
 

@@ -56,26 +56,38 @@ def clusters():
     return render_template("Clusters.html",kcount=clusterCount,ucount=usersToCluster)
 
 
-@app.route('/topCount', methods=['GET','POST'])
+# @app.route('/topCount', methods=['GET','POST'])
+# def topCount():
+#     global topCount
+#     global userGraph
+#     # print(request.args)
+#     topCount = int(request.args.get('count'))
+#     links = dm.getLinks()
+#     userGraph = getUserGraph(links)
+#     return redirect(url_for('userForce'))
+
+
+# @app.route('/topEdges', methods=['GET', 'POST'])
+# def topEdgesCount():
+#     global topEdges
+#     global userGraph
+#     # print(request.args)
+#     topEdges = int(request.args.get('count'))
+#     links = dm.getLinks()
+#     userGraph = getUserGraph(links)
+#     return redirect(url_for('userForce'))
+
+@app.route('/userGraphPreferences', methods=['GET','POST'])
 def topCount():
     global topCount
     global userGraph
-    # print(request.args)
-    topCount = int(request.args.get('count'))
-    links = dm.getLinks()
-    userGraph = getUserGraph(links)
-    return redirect(url_for('userForce'))
-
-
-@app.route('/topEdges', methods=['GET', 'POST'])
-def topEdgesCount():
     global topEdges
-    global userGraph
-    # print(request.args)
-    topEdges = int(request.args.get('count'))
+
+    topCount = int(request.args.get('users'))
+    topEdges = int(request.args.get('edges'))
     links = dm.getLinks()
     userGraph = getUserGraph(links)
-    return redirect(url_for('userForce'))
+#     return redirect(url_for('userForce'))
 
 
 @app.route('/clusterCount', methods=['GET', 'POST'])
@@ -165,7 +177,7 @@ if __name__ == '__main__':
     topCount = 80
     topEdges = 100
     clusterCount = 20
-    usersToCluster = 150
+    usersToCluster = 1500
     topNPercentWords = 20
 
     app.config["DEBUG"] = True

@@ -29,7 +29,7 @@ class point:
         self.parentCluster = None
         self.data = dt
         self.username = user
-    
+
 
     def similarityTo(self,clust) -> float:
         thisV = []
@@ -43,21 +43,20 @@ class point:
 
         return sim(thisV, clV)
 
-    def assignClosest(self,clusters):
+    def assignClosest(self, clusters):
         sims = {}
         for c in clusters:
             sims[c] = self.similarityTo(c)
-        topClust = list(dict(sorted(sims.items(), key=lambda item: item[1],reverse=True)).keys())[0]
-        # indx = clusters.index(topClust)
+        topClust = list(dict(sorted(sims.items(), key=lambda item: item[1], reverse=True)).keys())[0]
+        indx = clusters.index(topClust)
         # top.
-        # self.parentCluster = clusters[indx]
-        self.parentCluster = topClust
-        self.parentCluster.addPoint(self)
-        # return self.parentCluster
+        self.parentCluster = clusters[indx]
+        return indx
 
 
 
-class Cluster:
+
+class cluster:
     centroid = None  # data vec
     points = []
 
@@ -69,14 +68,15 @@ class Cluster:
         newPtns = []
         for p in list(self.points):
             newPtns.append(p)
-        # newPtns.append(pnt)
-        np = Cluster(point(self.centroid.data))
+
+        np = cluster(point(self.centroid.data.copy()))
         np.points = newPtns
         return np
 
-    def addPoint(self,pnt):
-
-        newPtns = self.points.copy()
+    def addPoint(self, pnt):
+        newPtns = []
+        for p in list(self.points):
+            newPtns.append(p)
         newPtns.append(pnt)
         self.points = newPtns
 
@@ -113,6 +113,8 @@ class clusterSet:
             nc.append(copy(c))
         return type(self)(nc.copy())
 
+    
+
 
     def distanceToOtherSet(self,other) -> float:   #IDK WHAT TO DO HERE
         total = 0
@@ -124,23 +126,29 @@ class clusterSet:
             count+=1
         return total/count
 
-
     def reAssignPoints(self):
         allPts = []
         for c in self.clusters:
             allPts.extend(c.points)
             c.points.clear()
         for p in allPts:
-            p.assignClosest(self.clusters)
-            # self.clusters[indx].addPoint(p)
+            indx = p.assignClosest(self.clusters)
+            self.clusters[indx].addPoint(p)
 
-    def firstAssignPoints(self,userVecs):
+    # def firstAssignPoints(self,userVecs):
+    #     # allPts = userDocs
+    #     for userN,vec in tqdm(userVecs.items(),desc='Creating points'):
+    #         p = point(vec, user=userN)
+    #         # indx = p.assignClosest(self.clusters)
+    #         p.assignClosest(self.clusters)
+    #         # self.clusters[indx].addPoint(p)
+
+    def firstAssignPoints(self, userVecs):
         # allPts = userDocs
-        for userN,vec in tqdm(userVecs.items(),desc='Assgning points'):
+        for userN, vec in tqdm(userVecs.items(), desc='Assgning points'):
             p = point(vec, user=userN)
-            # indx = p.assignClosest(self.clusters)
-            p.assignClosest(self.clusters)
-            # self.clusters[indx].addPoint(p)
+            indx = p.assignClosest(self.clusters)
+            self.clusters[indx].addPoint(p)
 
 
 def randomInit(userDocs,k):
@@ -155,8 +163,8 @@ def randomInit(userDocs,k):
     initClusters = []
     for x in init:
         # points = list(list(userDocs.values())[x].values())
-        data = list(userDocs.values())[x]
-        clst = Cluster(point(data))
+        data = list(userDocs.values())[x].copy()
+        clst = cluster(point(data))
         initClusters.append(clst)
     return initClusters
 
@@ -173,9 +181,9 @@ def buildClusters(userDocs, k:int):
 
     # closest = closestCentr(currClust, userDocs)
     distances = [-1,-1,-1] # if we have same 3 distances in a row, we are done
-
+    epochCount = 0
     while True:
-        
+        epochCount+=1
         currClust.reAssignPoints()
         prevClust = copy(currClust)
         currClust = currClust.reCalculateCentroids()
@@ -187,7 +195,7 @@ def buildClusters(userDocs, k:int):
         print('\r',distances[-1],end='')
 
         if s>=0.999 or len(set(distances))<=1:
-            print()
+            print(f'\nDone in {epochCount} epochs!')
             return currClust
 
 

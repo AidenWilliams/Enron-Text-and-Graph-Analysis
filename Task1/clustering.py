@@ -135,13 +135,6 @@ class clusterSet:
             indx = p.assignClosest(self.clusters)
             self.clusters[indx].addPoint(p)
 
-    # def firstAssignPoints(self,userVecs):
-    #     # allPts = userDocs
-    #     for userN,vec in tqdm(userVecs.items(),desc='Creating points'):
-    #         p = point(vec, user=userN)
-    #         # indx = p.assignClosest(self.clusters)
-    #         p.assignClosest(self.clusters)
-    #         # self.clusters[indx].addPoint(p)
 
     def firstAssignPoints(self, userVecs):
         # allPts = userDocs
@@ -162,8 +155,8 @@ def randomInit(userDocs,k):
 
     initClusters = []
     for x in init:
-        # points = list(list(userDocs.values())[x].values())
-        data = list(userDocs.values())[x].copy()
+
+        data = list(userDocs.values())[x]
         clst = cluster(point(data))
         initClusters.append(clst)
     return initClusters

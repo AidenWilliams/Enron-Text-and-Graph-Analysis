@@ -82,12 +82,13 @@ def topCount():
     global topCount
     global userGraph
     global topEdges
-
-    topCount = int(request.args.get('users'))
-    topEdges = int(request.args.get('edges'))
+    if request.args.get('users') is not None and request.args.get('users')!='':
+        topCount = int(request.args.get('users'))
+    if request.args.get('edges') is not None and request.args.get('edges')!='':
+        topEdges = int(request.args.get('edges'))
     links = dm.getLinks()
     userGraph = getUserGraph(links)
-#     return redirect(url_for('userForce'))
+    return redirect(url_for('userForce'))
 
 
 @app.route('/clusterCount', methods=['GET', 'POST'])
@@ -177,7 +178,7 @@ if __name__ == '__main__':
     topCount = 80
     topEdges = 100
     clusterCount = 20
-    usersToCluster = 1500
+    usersToCluster = 150
     topNPercentWords = 20
 
     app.config["DEBUG"] = True

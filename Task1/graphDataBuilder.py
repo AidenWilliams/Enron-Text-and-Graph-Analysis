@@ -12,7 +12,7 @@ def topTerms(vUsers, n,chop=True):
         sortedTerms = {k: v for k, v in sorted(vec.items(), key=lambda item: item[1])}
 
         cutoff = math.ceil(n/100*len(vec))
-        # print(cutoff)
+
         for key, value in list(reversed(list(sortedTerms.items())))[:cutoff]:
             topTerms[user][key] = value
     return topTerms
@@ -23,12 +23,12 @@ def getNodes(vUsers):
 
 
 def formatLinks(lnks, nodes, topEdges):
-    # fmtd = dict.fromkeys(lnks.keys())
+
     fmtd = []
     added = set()
     nodes = set(nodes)
 
-    # counts = {}
+
     cutoff = {}
     edgeTotals = {}
     for user, contacts in lnks.items():
@@ -38,7 +38,7 @@ def formatLinks(lnks, nodes, topEdges):
 
 
     for user, conn in tqdm(lnks.items(), desc='Formatting Links'):
-        # prevLen = len(conn)
+
         if topEdges != 100:
             cutoff = int(topEdges/100*len(conn))
             conn = dict(

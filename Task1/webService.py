@@ -111,9 +111,7 @@ def topCloudTerms():
 
     topNPercentWords = int(request.args.get('count'))
     topClustTerms = cl.getTopClusterTerms(clusterDataRaw, topNPercentWords)
-    # code = int(request.args.get('clusterCode'))
-    
-    # print(request.args)
+
     if request.args.get('userID') is not None and request.args.get('userID') != '':
         uid = request.args.get('userID')
         return render_template('cloud.html', user=uid, topn=topNPercentWords)
@@ -169,11 +167,11 @@ def reCluster():
 if __name__ == '__main__':    
     topCount = 80
     topEdges = 100
-    clusterCount = 1
-    usersToCluster = 1
+    clusterCount = 4
+    usersToCluster = 100
     topNPercentWords = 5
 
-    app.config["DEBUG"] = True
+    app.config["DEBUG"] = False
 
     links = dm.getLinks()
     userGraph = getUserGraph(links)
@@ -183,7 +181,7 @@ if __name__ == '__main__':
 
     clusterDataRaw = cl.startCluster(k=clusterCount, userCount=usersToCluster)
     topClustTerms = cl.getTopClusterTerms(clusterDataRaw, topNPercentWords)
-    # print(topClustTerms)
+
     clusterDataCsv = cl.clusterDataToCsv(clusterDataRaw)
 
 

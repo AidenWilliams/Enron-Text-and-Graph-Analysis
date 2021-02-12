@@ -172,7 +172,7 @@ def buildClusters(userDocs, k:int):
     currClust = clusterSet(initClusters)
     currClust.firstAssignPoints(userDocs)
 
-    # closest = closestCentr(currClust, userDocs)
+
     distances = [-3,-2,-1] # if we have same 3 distances in a row, we are done
     epochCount = 0
     while True:

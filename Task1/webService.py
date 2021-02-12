@@ -34,11 +34,6 @@ def userCloudData():
     return jsonify(wordList)
 
 
-@app.route('/clusterGraphData', methods=['GET'])
-def clusterGraph():
-    print(clusterDataCsv)
-    return clusterDataCsv
-
 
 @app.route('/cloud', methods=['GET'])
 def userCloud():
@@ -56,27 +51,6 @@ def clusters():
     return render_template("Clusters.html",kcount=clusterCount,ucount=usersToCluster)
 
 
-# @app.route('/topCount', methods=['GET','POST'])
-# def topCount():
-#     global topCount
-#     global userGraph
-#     # print(request.args)
-#     topCount = int(request.args.get('count'))
-#     links = dm.getLinks()
-#     userGraph = getUserGraph(links)
-#     return redirect(url_for('userForce'))
-
-
-# @app.route('/topEdges', methods=['GET', 'POST'])
-# def topEdgesCount():
-#     global topEdges
-#     global userGraph
-#     # print(request.args)
-#     topEdges = int(request.args.get('count'))
-#     links = dm.getLinks()
-#     userGraph = getUserGraph(links)
-#     return redirect(url_for('userForce'))
-
 @app.route('/userGraphPreferences', methods=['GET','POST'])
 def topCount():
     global topCount
@@ -91,23 +65,42 @@ def topCount():
     return redirect(url_for('userForce'))
 
 
-@app.route('/clusterCount', methods=['GET', 'POST'])
-def cluserCount():
-    global clusterCount
+@app.route('/clusterGraphData', methods=['GET'])
+def clusterGraph():
+    print(clusterDataCsv)
+    return clusterDataCsv
+
+# @app.route('/clusterCount', methods=['GET', 'POST'])
+# def cluserCount():
+#     global clusterCount
     
-    clusterCount = int(request.args.get('count'))
-    reCluster()
-    return redirect(url_for('clusters'))
+#     clusterCount = int(request.args.get('count'))
+#     reCluster()
+#     return redirect(url_for('clusters'))
 
 
 
-@app.route('/userClusterCount', methods=['GET', 'POST'])
-def userCluster():
+# @app.route('/userClusterCount', methods=['GET', 'POST'])
+# def userCluster():
+#     global usersToCluster
+#     usersToCluster = int(request.args.get('count'))
+#     reCluster()
+#     return redirect(url_for('clusters'))
+
+
+@app.route('/clusterGraphPreferences', methods=['GET', 'POST'])
+def clusterPrefs():
+    global clusterCount
+    global userGraph
     global usersToCluster
-    usersToCluster = int(request.args.get('count'))
+    if request.args.get('users') is not None and request.args.get('users') != '':
+        usersToCluster = int(request.args.get('users'))
+    if request.args.get('clusters') is not None and request.args.get('clusters') != '':
+        clusterCount = int(request.args.get('clusters'))
+        
     reCluster()
     return redirect(url_for('clusters'))
-
+    
 
 @app.route('/clusterCloudData', methods=['GET'])
 def clusterCloudData():

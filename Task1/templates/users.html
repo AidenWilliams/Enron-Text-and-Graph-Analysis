@@ -6,6 +6,12 @@
         /* border: none !important; */
     }
 
+    .invis {
+        background-color: rgba(0, 0, 0, 0) !important;
+        border: 2px;
+        /* background-image: none; */
+    }
+
     body {
         height: 50vw;
         width: 100vw;
@@ -27,7 +33,8 @@
             <input placeholder="Current: {{ecount}}%" type="number" id="edges" class="form-control" name="edges"
                 autocomplete="off" min="0" max="100">
         </div>
-        <!-- <button type="submit" class="btn btn-default">Submit</button> -->
+        <br>
+        <button type="submit" class="btn btn-primary" hidden>Re-Build</button>
     </form>
 </div>
 </div>

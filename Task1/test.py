@@ -1,18 +1,21 @@
 import dependancyManager as dm
 from tqdm import tqdm
+
+dm.jsonDump(dm.getRawMB())
 vdc = dm.getVDocs()
 # docs = dm.getDocs()
-docs = dm.getuvec()
+userVectors = dm.getuvec()
 
 
 
-a = 'susan.mara@enron.com'
-b = 'richard.shapiro@enron.com'
+a = 'k..allen@enron.com'
+b = 'john.arnold@enron.com'
 
 count = 0
 keys = []
-for key,val in docs.items():
-    if val == docs[a] and key!=a:
+adict = userVectors[a]
+for key, val in userVectors.items():
+    if val == userVectors[a] and key != a:
         count+=1
         keys.append(key)
 
@@ -27,7 +30,14 @@ for docK,doc in vdc.items():
             added = docK[0]+docK[1]
             filteredDocs[added] = vdc[docK]
 
-dm.jsonDump(filteredDocs)
+# dm.jsonDump(filteredDocs)
+
+
+
+
+
+
+
 
 # print(docs[a].keys())
 # print('\n\n')

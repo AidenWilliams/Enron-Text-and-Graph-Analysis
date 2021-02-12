@@ -216,9 +216,11 @@ def clusterDataToCsv(clusters):
     for c in clusters:
         i += 1
         size = len(c.points)
-        # if size == 2:
-        #     for p in c.points:
-        #         print(p.data.keys())
+        if size == 2:
+            for p in c.points:
+                print(p.username)
+                print(p.data.keys())
+                
         data.append({'id': i, 'size': size, 'groupid': 1})
 
 

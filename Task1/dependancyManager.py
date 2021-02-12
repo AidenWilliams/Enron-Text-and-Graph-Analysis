@@ -2,6 +2,7 @@ import pickle,os,json
 import eparser as prs
 import docProcessor as dp
 
+# mode = 'maildir'
 mode = 'maildir'
 
 root = os.path.join('data', mode)
@@ -120,7 +121,7 @@ def getLinks():
     return _links
 
 
-def jsonDump(data, path=os.path.join(workDir, 'tmp.json')):
+def jsonDump(data, path=os.path.join(workDir, 'JSON_DUMP.json')):
     print(f'Saving data as json to: {path}')
     with open(path, 'w') as handle:
         json.dump(data, handle,indent=4)

@@ -75,15 +75,11 @@ class Cluster:
         return np
 
     def addPoint(self,pnt):
-        # print('appending')
+
         newPtns = self.points.copy()
-        # for p in list(self.points):
-        #     newPtns.append(p)
         newPtns.append(pnt)
         self.points = newPtns
-        # self.points = self.points.append(pnt)
-        # newPoint = point(pnt.data,user=pnt.username)
-        # self.points.append(newPoint)
+
 
     def reCalc(self):
         totals = {}

@@ -70,23 +70,6 @@ def clusterGraph():
     print(clusterDataCsv)
     return clusterDataCsv
 
-# @app.route('/clusterCount', methods=['GET', 'POST'])
-# def cluserCount():
-#     global clusterCount
-    
-#     clusterCount = int(request.args.get('count'))
-#     reCluster()
-#     return redirect(url_for('clusters'))
-
-
-
-# @app.route('/userClusterCount', methods=['GET', 'POST'])
-# def userCluster():
-#     global usersToCluster
-#     usersToCluster = int(request.args.get('count'))
-#     reCluster()
-#     return redirect(url_for('clusters'))
-
 
 @app.route('/clusterGraphPreferences', methods=['GET', 'POST'])
 def clusterPrefs():
@@ -156,13 +139,10 @@ def getUserGraph(rawLinks):
     return userGraph
 
 
-# def topEdges(rawLinks):
-
 def reCluster():
     global clusterDataCsv
     global topClustTerms
-    # print('clister count',clusterCount)
-    # print('uysers clust count',usersToCluster)
+
     clusterDataRaw = cl.startCluster(k=clusterCount, userCount=usersToCluster)
     topClustTerms = cl.getTopClusterTerms(clusterDataRaw, topNPercentWords)
     clusterDataCsv = cl.clusterDataToCsv(clusterDataRaw)

@@ -164,8 +164,8 @@ def reCluster():
 if __name__ == '__main__':    
     topCount = 80
     topEdges = 100
-    clusterCount = 19
-    usersToCluster = 19
+    clusterCount = 20
+    usersToCluster = 200
     topNPercentWords = 20
 
     app.config["DEBUG"] = True

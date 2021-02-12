@@ -1,13 +1,10 @@
 import os
 from email.parser import Parser
 from tqdm import tqdm
-# from multiprocessing import Pool
 
 
 def readMail(email):
-    # update = {'subject': email['subject'],'text': email.get_payload()[:25000], 'tos': []} 
     update = {'subject': email['subject'],'text': email.get_payload()[-25000:], 'tos': []} 
-    #limit text size to 25k characters; should be more than enough for normal email, but cuts down the outliers
 
     if email['to']:
         email_to = email['to']

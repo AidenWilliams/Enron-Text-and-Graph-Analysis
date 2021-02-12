@@ -3,6 +3,7 @@ from copy import copy
 import dependancyManager as dm
 import graphDataBuilder as gdb
 import webService as ws
+from tqdm import tqdm
 import io,csv
 
 Vector = list[float]
@@ -134,7 +135,7 @@ class clusterSet:
 
     def firstAssignPoints(self,userVecs):
         # allPts = userDocs
-        for userN,vec in userVecs.items():
+        for userN,vec in tqdm(userVecs.items(),desc='Assgning points'):
             p = point(vec, user=userN)
             indx = p.assignClosest(self.clusters)
             self.clusters[indx].addPoint(p)
@@ -170,6 +171,7 @@ def buildClusters(userDocs, k:int):
 
     # closest = closestCentr(currClust, userDocs)
     distances = [-1,-1,-1] # if we have same 3 distances in a row, we are done
+
     while True:
         
         currClust.reAssignPoints()
@@ -203,12 +205,7 @@ def clusterDataToCsv(clusters):
     data = []
     for c in clusters:
         i += 1
-        size = len(c.points)
-        if size == 2:
-            for p in c.points:
-                print(p.username)
-                print(p.data.keys())
-                
+        size = len(c.points)                
         data.append({'id': i, 'size': size, 'groupid': 1})
 
 

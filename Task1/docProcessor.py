@@ -215,7 +215,7 @@ def preProcessAll(mailboxes):
 
     p = Pool(processes=cpu_count() // 2)
     senders = newMailboxes.keys()
-    print('Starting to process data, it is normal for this process to seem "stuck" as it weights for all threads to finish')
+    print('Starting to process data, it is normal for this process to seem "stuck" as it waits for all threads to finish')
     processed = p.map(preProcessUser, tqdm(newMailboxes.values(),desc='PreProcessing'))
     p.close()
     p.join()
@@ -264,8 +264,7 @@ def vectorizeUsers(data):
     for users, doc in tqdm(vDocs.items(),desc='Weighting User Terms'):
         A = users[0]
         B = users[1]
-        if A == "susan.mara@enron.com" or B == "susan.mara@enron.com":
-            print('here')
+
         if A not in vCounts:
             vCounts[A] = {}
             vTotals[A] = {}

@@ -5,8 +5,8 @@ from tqdm import tqdm
 
 
 def readMail(email):
-    update = {'subject': email['subject'],
-              'text': email.get_payload()[:25000], 'tos': []} 
+    # update = {'subject': email['subject'],'text': email.get_payload()[:25000], 'tos': []} 
+    update = {'subject': email['subject'],'text': email.get_payload()[-25000:], 'tos': []} 
     #limit text size to 25k characters; should be more than enough for normal email, but cuts down the outliers
 
     if email['to']:

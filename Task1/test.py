@@ -1,7 +1,7 @@
 import dependancyManager as dm
 from tqdm import tqdm
 
-dm.jsonDump(dm.getRawMB())
+dm.jsonDump(dm.getProcMB())
 vdc = dm.getVDocs()
 # docs = dm.getDocs()
 userVectors = dm.getuvec()
@@ -27,8 +27,10 @@ filteredDocs = {}
 for docK,doc in vdc.items():
     for key in keys:
         if key in docK:
-            added = docK[0]+docK[1]
-            filteredDocs[added] = vdc[docK]
+            for otherKeys in keys:
+                if otherKeys !=key and  otherKeys not in docK:
+                    added = docK[0]+docK[1]
+                    filteredDocs[added] = vdc[docK]
 
 # dm.jsonDump(filteredDocs)
 

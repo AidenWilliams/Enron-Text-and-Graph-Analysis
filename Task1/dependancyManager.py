@@ -3,7 +3,7 @@ import eparser as prs
 import docProcessor as dp
 
 # mode = 'maildir'
-mode = 'maildir'
+mode = 'subset'
 
 root = os.path.join('data', mode)
 

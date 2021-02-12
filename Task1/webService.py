@@ -100,7 +100,7 @@ def clusterPrefs():
         
     reCluster()
     return redirect(url_for('clusters'))
-    
+
 
 @app.route('/clusterCloudData', methods=['GET'])
 def clusterCloudData():
@@ -171,10 +171,10 @@ if __name__ == '__main__':
     topCount = 80
     topEdges = 100
     clusterCount = 20
-    usersToCluster = 150
+    usersToCluster = 300
     topNPercentWords = 20
 
-    app.config["DEBUG"] = True
+    app.config["DEBUG"] = False
 
     links = dm.getLinks()
     userGraph = getUserGraph(links)

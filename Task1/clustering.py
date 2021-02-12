@@ -74,9 +74,9 @@ class cluster:
         return np
 
     def addPoint(self, pnt):
-        newPtns = []
-        for p in list(self.points):
-            newPtns.append(p)
+        newPtns = self.points.copy()
+        # for p in list(self.points):
+        #     newPtns.append(p)
         newPtns.append(pnt)
         self.points = newPtns
 
@@ -173,7 +173,7 @@ def buildClusters(userDocs, k:int):
     currClust.firstAssignPoints(userDocs)
 
     # closest = closestCentr(currClust, userDocs)
-    distances = [-1,-1,-1] # if we have same 3 distances in a row, we are done
+    distances = [-3,-2,-1] # if we have same 3 distances in a row, we are done
     epochCount = 0
     while True:
         epochCount+=1

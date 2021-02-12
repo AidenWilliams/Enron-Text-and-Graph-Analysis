@@ -33,7 +33,7 @@
 <p class="invis">Changing these values may take a long time, website may seem offline whilst processing, kindly check
     the console for
     updates</p>
-<div class="row g-2 align-items-center" autocomplete="off"></div>
+
 <div class="position-fixed">
     <form action='/clusterGraphPreferences' method='GET'>
 
@@ -58,7 +58,7 @@
         <button type="submit" class="btn btn-default" hidden>Re-Cluster</button>
     </form>
 </div>
-</div>
+
 
 
 <body>
@@ -167,7 +167,7 @@
                     .text(d => d.id)
 
                 elements.append("title")
-                    .text(d => 'Cluster '+d.id+' contains '+d.size+' user(s)');
+                    .text(d => 'Cluster ' + d.id + ' contains ' + d.size + ' user(s)');
 
                 // set simulation's nodes to our newly created nodes array
                 // simulation starts running automatically once nodes are set

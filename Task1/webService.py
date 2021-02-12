@@ -40,7 +40,7 @@ def userCloud():
     code = int(request.args.get('code'))
     user = userGraph['nodes'][code]['id']
 
-    return render_template('cloud.html', user=user)
+    return render_template('cloud.html', user=user, topn=topNPercentWords)
 
 @app.route('/users', methods=['GET'])
 def userForce():
@@ -67,7 +67,7 @@ def topCount():
 
 @app.route('/clusterGraphData', methods=['GET'])
 def clusterGraph():
-    print(clusterDataCsv)
+    # print(clusterDataCsv)
     return clusterDataCsv
 
 
@@ -101,8 +101,27 @@ def clusterCloudData():
 def clusterCloud():
     code = int(request.args.get('code'))
     # user = 'Cluster '+str(code)
+    return render_template('cloud.html', cluster=code, topn=topNPercentWords)
 
-    return render_template('cloud.html', cluster=code)
+
+@app.route('/topTermsCloud', methods=['GET'])
+def topCloudTerms():
+    global topNPercentWords
+    global topClustTerms
+
+    topNPercentWords = int(request.args.get('count'))
+    topClustTerms = cl.getTopClusterTerms(clusterDataRaw, topNPercentWords)
+    # code = int(request.args.get('clusterCode'))
+    
+    # print(request.args)
+    if request.args.get('userID') is not None and request.args.get('userID') != '':
+        uid = request.args.get('userID')
+        return render_template('cloud.html', user=uid, topn=topNPercentWords)
+
+    elif request.args.get('clusterCode') is not None and request.args.get('clusterCode') != '':
+        code = int(request.args.get('clusterCode'))
+        return render_template('cloud.html', cluster=code, topn=topNPercentWords)
+
 
 def topUsers(rawLinks,tc = None,chop=True):
     global topCount
@@ -150,11 +169,11 @@ def reCluster():
 if __name__ == '__main__':    
     topCount = 80
     topEdges = 100
-    clusterCount = 20
-    usersToCluster = 300
-    topNPercentWords = 20
+    clusterCount = 1
+    usersToCluster = 1
+    topNPercentWords = 5
 
-    app.config["DEBUG"] = False
+    app.config["DEBUG"] = True
 
     links = dm.getLinks()
     userGraph = getUserGraph(links)

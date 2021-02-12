@@ -4,9 +4,32 @@
 {% if cluster is defined %}
 <p>Kindly note that for clusters it usually takes a bit of time for the graph to load!</p>
 <p>Word Cloud for Cluster {{cluster}}</p>
+
+
 {% else %}
 <p>Word Cloud for: {{user}}</p>
 {% endif %}
+
+
+<div class="position-fixed">
+    <form action='/topTermsCloud' method='GET'>
+        <div class="col-sm">
+            <label for="edges" class="col-form-label">Top N% Words</label>
+            <input placeholder="{{topn}}%" type="number" id="count" class="form-control" name="count"
+                autocomplete="off" min="0" max="100">
+        </div>
+
+
+        {% if cluster is defined %}
+        <input value="{{cluster}}" id="clusterCode" class="form-control" name="clusterCode" hidden>
+        {% else %}
+        <input value="{{user}}" id="userID" class="form-control" name="userID" hidden>
+        {% endif %}
+
+        <br>
+        <button type="submit" class="btn btn-primary" hidden>Re-Build</button>
+    </form>
+</div>
 
 <div id="my_dataviz"></div>
 
@@ -14,7 +37,7 @@
 <script>
 
     var myWords = []
-    {% if cluster is defined  %}
+    {% if cluster is defined %}
     var url = "/clusterCloudData?cluster={{cluster}}";
     {% else %}
     var url = "/userCloudData?user={{user}}";
@@ -25,8 +48,8 @@
 
         // set the dimensions and margins of the graph
         var margin = { top: 10, right: 10, bottom: 10, left: 10 },
-            width = window.innerWidth*0.8 - margin.left - margin.right,
-            height = window.innerHeight*0.8 - margin.top - margin.bottom;
+            width = window.innerWidth * 0.8 - margin.left - margin.right,
+            height = window.innerHeight * 0.8 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
         var svg = d3.select("#my_dataviz").append("svg")
@@ -43,7 +66,7 @@
             .words(myWords.map(function (d) { return { text: d.word, size: d.size }; }))
             .padding(5)        //space between words
             .rotate(function () { return ~~(Math.random() * 2) * 0; })
-            .fontSize(function (d) { return d.size*10; })      // font size of words
+            .fontSize(function (d) { return d.size * 10; })      // font size of words
             .on("end", draw);
         layout.start();
 

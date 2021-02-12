@@ -1,4 +1,4 @@
-import pickle,os
+import pickle,os,json
 import eparser as prs
 import docProcessor as dp
 
@@ -119,6 +119,11 @@ def getLinks():
         _links = loadIfCan(dp.getAllLinks,  'links.pkl', arg=getRawMB())
     return _links
 
+
+def jsonDump(data, path=os.path.join(workDir, 'tmp.json')):
+    print(f'Saving data as json to: {path}')
+    with open(path, 'w') as handle:
+        json.dump(data, handle,indent=4)
 
 
 

@@ -3,10 +3,11 @@ from tqdm import tqdm
 
 
 
-def topUserTerms(vUsers, n):
+def topTerms(vUsers, n,chop=True):
     topTerms = {}
-    for user, vec in tqdm(vUsers.items(), desc='Top User Terms'):
-        user = user.split('@')[0]
+    for user, vec in tqdm(vUsers.items(), desc='Top Terms'):
+        if chop:
+            user = user.split('@')[0]
         topTerms[user]= {}
         sortedTerms = {k: v for k, v in sorted(vec.items(), key=lambda item: item[1])}
 

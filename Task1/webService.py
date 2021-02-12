@@ -26,7 +26,7 @@ def usGraphDa():
 @app.route('/userCloudData', methods=['GET'])
 def userCloudData():
     user = request.args.get('user')
-    userTerms = topTerms.get(user)
+    userTerms = topUserTerms.get(user)
 
     wordList = []
     for key, value in userTerms.items():
@@ -36,12 +36,12 @@ def userCloudData():
 
 @app.route('/clusterGraphData', methods=['GET'])
 def clusterGraph():
-    print(clusterData)
-    return clusterData
+    # print(clusterDataCsv)
+    return clusterDataCsv
 
 
 @app.route('/cloud', methods=['GET'])
-def ug():
+def userCloud():
     code = int(request.args.get('code'))
     user = userGraph['nodes'][code]['id']
 
@@ -87,6 +87,7 @@ def cluserCount():
     return redirect(url_for('clusters'))
 
 
+
 @app.route('/userClusterCount', methods=['GET', 'POST'])
 def userCluster():
     global usersToCluster
@@ -95,6 +96,24 @@ def userCluster():
     return redirect(url_for('clusters'))
 
 
+@app.route('/clusterCloudData', methods=['GET'])
+def clusterCloudData():
+    global topClustTerms
+    clusterID = int(request.args.get('cluster'))
+    clusterTerms = topClustTerms.get(clusterID)
+
+    wordList = []
+    for key, value in clusterTerms.items():
+        wordList.append({'word': key, 'size': value})
+    return jsonify(wordList)
+
+
+@app.route('/clusterCloud', methods=['GET'])
+def clusterCloud():
+    code = int(request.args.get('code'))
+    # user = 'Cluster '+str(code)
+
+    return render_template('cloud.html', cluster=code)
 
 def topUsers(rawLinks,tc = None,chop=True):
     global topCount
@@ -134,19 +153,20 @@ def getUserGraph(rawLinks):
 # def topEdges(rawLinks):
 
 def reCluster():
-    global clusterData
+    global clusterDataCsv
+    global topClustTerms
     # print('clister count',clusterCount)
     # print('uysers clust count',usersToCluster)
-    clusterData = cl.toCSV(cl.getData(
-        k=clusterCount, userCount=usersToCluster))
+    clusterDataRaw = cl.startCluster(k=clusterCount, userCount=usersToCluster)
+    topClustTerms = cl.getTopClusterTerms(clusterDataRaw, topNPercentWords)
+    clusterDataCsv = cl.clusterDataToCsv(clusterDataRaw)
 
 if __name__ == '__main__':    
-    
     topCount = 80
     topEdges = 100
-    clusterCount = 5
-    usersToCluster = 3000
-
+    clusterCount = 19
+    usersToCluster = 19
+    topNPercentWords = 20
 
     app.config["DEBUG"] = True
 
@@ -154,8 +174,13 @@ if __name__ == '__main__':
     userGraph = getUserGraph(links)
 
     vectorUsers = dm.getuvec()
-    topTerms = gdb.topUserTerms(vectorUsers, 20)
+    topUserTerms = gdb.topTerms(vectorUsers, topNPercentWords)
 
-    clusterData = cl.toCSV(cl.getData(k=clusterCount,userCount=usersToCluster))
+    clusterDataRaw = cl.startCluster(k=clusterCount, userCount=usersToCluster)
+    topClustTerms = cl.getTopClusterTerms(clusterDataRaw, topNPercentWords)
+    # print(topClustTerms)
+    clusterDataCsv = cl.clusterDataToCsv(clusterDataRaw)
+
+
     # app.run(host='0.0.0.0',port=5000)
     app.run()

@@ -1,6 +1,7 @@
 from random import randint
-import dependancyManager as dm
 from copy import copy
+import dependancyManager as dm
+import graphDataBuilder as gdb
 import webService as ws
 import io,csv
 
@@ -21,10 +22,12 @@ def sim(A: Vector, B:Vector) -> float:
 class point:
     parentCluster = None
     data = {}  # data vec
+    username = ""
 
-    def __init__(self,dt:dict):
+    def __init__(self,dt:dict,user=""):
         self.parentCluster = None
         self.data = dt
+        self.username = user
     
 
     def similarityTo(self,clust) -> float:
@@ -45,15 +48,10 @@ class point:
             sims[c] = self.similarityTo(c)
         topClust = list(dict(sorted(sims.items(), key=lambda item: item[1],reverse=True)).keys())[0]
         indx = clusters.index(topClust)
-        # clusters[indx].addPoint(self)
-        # points = topClust.points.copy()
-        # topClust = Cluster(topClust.centroid.copy())
-        # topClust.points = points
         # top.
         self.parentCluster = clusters[indx]
         return indx
-        # self.parentCluster.points.append(self)
-        # self.parentCluster.addPoint(self)
+
 
 
 class Cluster:
@@ -121,12 +119,9 @@ class clusterSet:
             cav = list(cA.centroid.data.values())
             cbv = list(cB.centroid.data.values())
             total+=sim(cav,cbv)
-            # total+=sim(cA.data,cB.data)
             count+=1
         return total/count
 
-    # def distanceToPoint(slef,vec):          #IDK WHAT TO DO HERE//needed??
-    #     return sim()
 
     def reAssignPoints(self):
         allPts = []
@@ -139,8 +134,8 @@ class clusterSet:
 
     def firstAssignPoints(self,userVecs):
         # allPts = userDocs
-        for user,vec in userVecs.items():
-            p = point(vec)
+        for userN,vec in userVecs.items():
+            p = point(vec, user=userN)
             indx = p.assignClosest(self.clusters)
             self.clusters[indx].addPoint(p)
             
@@ -155,13 +150,6 @@ def filterDocs(userVecs):
         if user not in totals:
             totals[user] = 0
         totals[user] +=vec
-    #return userDocs
-
-    #maybe use top nodes ?
-
-    #rank docs based on something
-    #choose top N docs
-    # pass
 
 
 def randomInit(userDocs,k):
@@ -211,7 +199,7 @@ def buildClusters(userDocs, k:int):
             return currClust
 
 
-def cluster(k=20,userCount=6000):
+def startCluster(k=20,userCount=300):
     uvec = dm.getuvec()
     links = dm.getLinks()
     subkeys = ws.topUsers(links,tc=userCount,chop=False)
@@ -222,26 +210,21 @@ def cluster(k=20,userCount=6000):
     return clusters
 
 
-def getData(k=20, userCount=4000):
-    
-    i = 0;
+def clusterDataToCsv(clusters):
+    i = 0
     data = []
-    for c in cluster(k,userCount):
-        i+=1        
-        size =  len(c.points)
-        if size == 2:
-            for p in c.points:
-                print(p.data.keys())
+    for c in clusters:
+        i += 1
+        size = len(c.points)
+        # if size == 2:
+        #     for p in c.points:
+        #         print(p.data.keys())
         data.append({'id': i, 'size': size, 'groupid': 1})
-        # print('data is: ',data[-1])
-
-    return data
 
 
-def toCSV(data):
     dest = io.StringIO()
     keys = data[0].keys()
-    # print('keys:',keys)
+
     dict_writer = csv.DictWriter(dest, keys,delimiter=',',lineterminator='\n')
     dict_writer.writeheader()
     dict_writer.writerows(data)
@@ -250,7 +233,15 @@ def toCSV(data):
     return dest.read()
 
 
-# print('final:', toCSV(getData(k=1, userCount=10)))
+def getTopClusterTerms(clusters,n):
+    vecs = {}
+    i = 0
+    for c in clusters:
+        i+=1
+        vecs[i] = c.centroid.data
+    return gdb.topTerms(vecs,n,chop=False)
+
+# print('final:', clusterDataToCsv(getData(k=1, userCount=10)))
 
 # matching = 0
 # count = 0

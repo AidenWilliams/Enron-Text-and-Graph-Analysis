@@ -291,10 +291,10 @@ def vectorizeUsers(data):
             skipCount +=1
             continue
 
-        for key in vCounts[user]:
+        for word in vCounts[user]:
             if user not in vUsers:
                 vUsers[user] = {}
-            vUsers[user][key] = vTotals[user][key]/vCounts[user][key]
+            vUsers[user][word] = vTotals[user][word]/vCounts[user][word]
     print(skipCount,'users were skipped')
     return vUsers
 

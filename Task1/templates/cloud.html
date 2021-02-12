@@ -1,8 +1,11 @@
 {% extends "navbar.html" %}
 {% block content %}
 <!-- <h1>Welcome to the web dashboard!</h1> -->
-
+{% if cluster is defined %}
+<p>Word Cloud for Cluster {{cluster}}</p>
+{% else %}
 <p>Word Cloud for: {{user}}</p>
+{% endif %}
 
 <div id="my_dataviz"></div>
 
@@ -10,7 +13,11 @@
 <script>
 
     var myWords = []
+    {% if cluster is defined  %}
+    var url = "/clusterCloudData?cluster={{cluster}}";
+    {% else %}
     var url = "/userCloudData?user={{user}}";
+    {% endif %}
     d3.json(url, function (json) {
         myWords = json
         console.log(myWords)

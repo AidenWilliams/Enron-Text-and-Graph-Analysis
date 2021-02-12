@@ -145,6 +145,11 @@
                     .data(nodes, d => d.id)
                     .enter()
                     .append('g')
+                    .on('click', function (d, i) {
+                        // console.log(d)
+                        // console.log(i)
+                        window.location.href = "/clusterCloud?code=" + d.id;
+                    });
 
                 bubbles = elements
                     .append('circle')

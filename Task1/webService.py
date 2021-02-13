@@ -1,6 +1,5 @@
 import flask,os
 from tqdm import tqdm
-import numpy as np
 from flask import render_template,jsonify,request,redirect,url_for
 
 import graphDataBuilder as gdb

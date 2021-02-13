@@ -6,14 +6,14 @@ import webService as ws
 from tqdm import tqdm
 import io,csv
 
-Vector = list[float]
+# Vector = list[float]
 
 
 def dot(A, B):
     return (sum(a*b for a, b in zip(A, B)))
 
 
-def sim(A: Vector, B:Vector) -> float:
+def sim(A, B) -> float:
     denom = ((dot(A, A) ** .5) * (dot(B, B) ** .5))
     if denom == 0:
         return 0

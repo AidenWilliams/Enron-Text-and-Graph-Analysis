@@ -233,7 +233,7 @@ def preProcessUser(messages):
 
 def getALLDocs(mbxs):
     docs = {}
-    for sender, messages in tqdm(mbxs.items(), desc='Getting Docs'):
+    for sender, messages in tqdm(mbxs.items(), desc='Forming Docs'):
         for msg in messages:
             for recip in msg['tos']:
                 if sender == recip:

@@ -62,6 +62,8 @@ _vdocs = None
 _uvec = None
 _docs = None
 _links = None
+
+
 def getProcMB():
     global _preproc
     if _preproc is not None:

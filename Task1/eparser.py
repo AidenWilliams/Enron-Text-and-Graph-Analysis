@@ -16,7 +16,7 @@ def readMail(email):
 
 
 def addMail(dic, emailDir):
-    with open(emailDir, "r") as f:
+    with open(emailDir, "r",encoding='utf-8',errors='ignore') as f:
         email = Parser().parsestr(f.read())
         key = email['from']
         if key in dic:

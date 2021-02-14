@@ -1,4 +1,4 @@
-import pickle,os,json
+import pickle,os,json,gc
 import eparser as prs
 import docProcessor as dp
 
@@ -66,6 +66,8 @@ _links = None
 
 def getProcMB():
     global _preproc
+    global _mb
+
     if _preproc is not None:
         return _preproc
     ppPath = 'preProcessed.pkl'
@@ -75,6 +77,9 @@ def getProcMB():
        return _preproc
 
     _preproc =  loadIfCan(dp.preProcessAll, 'preProcessed.pkl', arg=getRawMB())
+    if _mb is not None:
+        del _mb
+        gc.collect()
     return _preproc
 
 
@@ -99,10 +104,16 @@ def getuvec():
 
 def getVDocs():
     global _vdocs
+    global _docs
+
     if _vdocs is not None:
         return _vdocs
 
     _vdocs = dp.vectorizeDocs(getDocs())
+    if _docs is not None:
+        del _docs
+        gc.collect()
+    
     return _vdocs
 
 

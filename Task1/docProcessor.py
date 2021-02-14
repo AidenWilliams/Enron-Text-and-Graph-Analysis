@@ -198,6 +198,7 @@ def vectorizeDocs(docs):
 
     weights = _weights(docs)
     del docs
+    # gc.collect()
     idf = _IDF(weights)
 
     for key, w in tqdm(weights.items(), desc='TFIDF'):

@@ -66,6 +66,8 @@ _links = None
 
 def getProcMB():
     global _preproc
+    global _mb
+
     if _preproc is not None:
         return _preproc
     ppPath = 'preProcessed.pkl'

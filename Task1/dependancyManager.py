@@ -93,7 +93,7 @@ def getuvec():
     if os.path.exists(os.path.join(workDir, uvp)):
         _uvec = loadFromFile(os.path.join(workDir, uvp))
         return _uvec
-    _uvec = loadIfCan(dp.vectorizeUsers, uvp, arg={'mb': getProcMB(), 'vd': getVDocs()})
+    _uvec = loadIfCan(dp.vectorizeUsers, uvp, getVDocs())
     return _uvec
 
 

@@ -254,9 +254,9 @@ def getALLDocs(mbxs):
 
 
 
-def vectorizeUsers(data):
-    vDocs = data['vd']
-    mb = data['mb']
+def vectorizeUsers(vDocs):
+    # vDocs = data['vd']
+    # mb = data['mb']
     vUsers = {}
 
     vCounts = {}
@@ -288,7 +288,7 @@ def vectorizeUsers(data):
                 vCounts[B][word] = 1
                 vTotals[B][word] = value
     skipCount = 0;
-    for user in tqdm(getAllAddresses(mb),desc='Vectorizing User Terms'):
+    for user in tqdm(getAllAddresses(dm.getProcMB(),desc='Vectorizing User Terms'):
         if user not in vCounts:
             skipCount +=1
             continue
@@ -297,6 +297,8 @@ def vectorizeUsers(data):
             if user not in vUsers:
                 vUsers[user] = {}
             vUsers[user][word] = vTotals[user][word]/vCounts[user][word]
+        # del vTotals[user]
+        # del vCounts[user]
     print(skipCount,'users were skipped')
     return vUsers
 

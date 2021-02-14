@@ -1,10 +1,12 @@
 # from parser import myDict
+import gc
 import os,math
 from tqdm import tqdm
 import nltk
 from multiprocessing import Pool, cpu_count
 nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
+
 
 import dependancyManager as dm
 
@@ -195,12 +197,14 @@ def vectorizeDocs(docs):
     tfidfs = {}
 
     weights = _weights(docs)
-
+    del docs
     idf = _IDF(weights)
 
     for key, w in tqdm(weights.items(), desc='TFIDF'):
         tfidfs[key] = _TFIDF(_TF(w), idf)
-
+        weights[key] = None
+    del weights
+    gc.collect()
     return tfidfs
 
 from multiprocessing import Pool,cpu_count
@@ -255,6 +259,7 @@ def getALLDocs(mbxs):
 
 
 def vectorizeUsers(vDocs):
+    gc.collect()
     # vDocs = data['vd']
     # mb = data['mb']
     vUsers = {}
@@ -287,8 +292,11 @@ def vectorizeUsers(vDocs):
             else:
                 vCounts[B][word] = 1
                 vTotals[B][word] = value
+        vDocs[users] = None
+    del vDocs
+    gc.collect()
     skipCount = 0;
-    for user in tqdm(getAllAddresses(dm.getProcMB(),desc='Vectorizing User Terms'):
+    for user in tqdm(getAllAddresses(dm.getProcMB()),desc='Vectorizing User Terms'):
         if user not in vCounts:
             skipCount +=1
             continue
@@ -297,9 +305,10 @@ def vectorizeUsers(vDocs):
             if user not in vUsers:
                 vUsers[user] = {}
             vUsers[user][word] = vTotals[user][word]/vCounts[user][word]
-        # del vTotals[user]
-        # del vCounts[user]
+        del vTotals[user]
+        del vCounts[user]
     print(skipCount,'users were skipped')
+    gc.collect()
     return vUsers
 
 

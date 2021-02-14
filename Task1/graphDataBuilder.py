@@ -12,6 +12,7 @@ def topTerms(vUsers, n,chop=True):
         sortedTerms = {k: v for k, v in sorted(vec.items(), key=lambda item: item[1])}
 
         cutoff = math.ceil(n/100*len(vec))
+        cutoff = min(450,cutoff)
 
         for key, value in list(reversed(list(sortedTerms.items())))[:cutoff]:
             topTerms[user][key] = value

@@ -66,7 +66,8 @@ _links = None
 
 def getProcMB():
     global _preproc
-    global _mb
+    # global _mb.
+
 
     if _preproc is not None:
         return _preproc
@@ -77,9 +78,9 @@ def getProcMB():
        return _preproc
 
     _preproc =  loadIfCan(dp.preProcessAll, 'preProcessed.pkl', arg=getRawMB())
-    if _mb is not None:
-        del _mb
-        gc.collect()
+    # if _mb is not None:
+    #     del _mb
+    #     gc.collect()
     return _preproc
 
 

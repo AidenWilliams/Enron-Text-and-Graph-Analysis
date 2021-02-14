@@ -208,7 +208,7 @@ def vectorizeDocs(docs):
     gc.collect()
     return tfidfs
 
-from multiprocessing import Pool,cpu_count
+
 def preProcessAll(mailboxes):
     newMailboxes = {}
     for sender, msgs in mailboxes.items():

@@ -1,4 +1,4 @@
-# Enron Text and Graph Analyses
+# Enron Text and Graph Analysis
 
 This project was an assignment for CS2205/2230 at UoM, it includes 2 parts:
 
